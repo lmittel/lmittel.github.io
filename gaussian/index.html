@@ -8,16 +8,16 @@
 <link rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>The Gaussian, Taken Apart</title>
-<meta name="description" content="The normal density, piece by piece: shift and scale, from density to probability, z-scores, where the π comes from, why only the Gaussian is both round and square, and the central limit theorem.">
+<meta name="description" content="The normal density, piece by piece: shift and scale, from density to probability, z-scores, where the π comes from, where draws land in one, two and three dimensions, why only the Gaussian is both round and square, and the central limit theorem.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Louis Mittel">
 <meta property="og:title" content="The Gaussian, Taken Apart">
-<meta property="og:description" content="The normal density, piece by piece: shift and scale, from density to probability, z-scores, where the π comes from, why only the Gaussian is both round and square, and the central limit theorem.">
+<meta property="og:description" content="The normal density, piece by piece: shift and scale, from density to probability, z-scores, where the π comes from, where draws land in one, two and three dimensions, why only the Gaussian is both round and square, and the central limit theorem.">
 <meta property="og:url" content="https://louismittel.com/gaussian/">
 <meta property="og:image" content="https://louismittel.com/gaussian/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="The title The Gaussian, taken apart, and the standard normal density formula, beside beads showing every way three dice can land and the bell curve they form">
+<meta property="og:image:alt" content="A close-up of beads strung on vertical wires, one bead for each way three dice can land, in orange and pink on a dark background">
 <meta name="twitter:card" content="summary_large_image">
 <script data-goatcounter="https://louismittel.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>try { if (localStorage.getItem("gauss-theme") === "dark") document.documentElement.dataset.theme = "dark"; } catch (e) {}</script>
@@ -117,7 +117,7 @@ i.v { font-style: italic; }
 .sec-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 22px; align-items: end; }
 .sec-head h2:last-child { grid-row: span 2; }
 .num { grid-row: span 2; font-family: var(--font-disp); font-weight: 300; font-style: italic; font-size: clamp(3.4rem, 8vw, 6rem); line-height: .8; color: var(--b1); font-variation-settings: "opsz" 144; }
-.sec:nth-of-type(2) .num { color: var(--b0); } .sec:nth-of-type(3) .num { color: var(--b1); } .sec:nth-of-type(4) .num { color: var(--b2); } .sec:nth-of-type(5) .num { color: var(--female); } .sec:nth-of-type(6) .num { color: var(--b3); }
+#s2 .num { color: var(--b0); } #s4 .num { color: var(--b1); } #s5 .num { color: var(--b2); } #s-draws .num { color: var(--male); } #s6 .num { color: var(--female); } #s-clt .num { color: var(--b3); }
 @media (max-width: 640px) { .sec-head { grid-template-columns: minmax(0, 1fr); } .num { grid-row: auto; font-size: 3rem; line-height: .9; } }
 h2 { margin: 0; font-family: var(--font-disp); font-weight: 500; font-size: clamp(1.6rem, 3.4vw, 2.4rem); line-height: 1.05; letter-spacing: -0.01em; font-variation-settings: "opsz" 96; }
 .idea { margin: 0; color: var(--ink-2); max-width: 68ch; }
@@ -347,16 +347,11 @@ input[type="range"]::-moz-range-thumb { box-sizing: border-box; width: 18px; hei
 }
 @media (prefers-reduced-motion: reduce) { .res.glow { animation: none; } }
 /* draws from the standard Gaussian in one, two and three dimensions */
-.smp-open-wrap { border-top: 1px solid var(--line); margin-top: 4px; padding-top: 12px; }
-.smp-dlg { width: min(1100px, 96vw); }
-.smp-in { position: relative; padding: 22px 24px 24px; }
-.smp-in .src-x { top: 10px; right: 10px; }
-.smp-in .src-sub { margin: 0 40px 0 0; font-size: 15px; max-width: 78ch; }
-.smp-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 14px; }
+.smp-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .smp-n { font: 600 14px var(--font-num); color: var(--ink-2); margin-left: 6px; }
 .smp-f { margin: 2px 0 8px; font-size: 15px; color: var(--ink); }
 .smp-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; margin-top: 16px; }
-@media (max-width: 760px) { .smp-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 880px) { .smp-grid { grid-template-columns: minmax(0, 1fr); } }   /* three clouds side by side need about 250px each */
 .smp-p { margin: 0; min-width: 0; }
 .smp-h { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
 .smp-h .mini-head { margin: 0 0 4px; }
@@ -483,22 +478,9 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
         <label class="slider" title="standard deviation"><span>σ</span><input type="range" id="a-s" min="0.15" max="2.5" step="0.01" value="1" aria-label="Standard deviation sigma"><output id="a-s-v"></output></label>
         <label class="slider"><span>a</span><input type="range" id="a-a" min="-4" max="4" step="0.01" value="-1" aria-label="Left end a"><output id="a-a-v"></output></label>
         <label class="slider"><span>b</span><input type="range" id="a-b" min="-4" max="4" step="0.01" value="1" aria-label="Right end b"><output id="a-b-v"></output></label>
-        <div class="smp-open-wrap"><button class="btn src-open" id="smp-open" type="button" aria-haspopup="dialog"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="8" cy="8" r="1.6" fill="currentColor"/><circle cx="4.6" cy="6.2" r="1.1" fill="currentColor"/><circle cx="11" cy="5.4" r="1.1" fill="currentColor"/><circle cx="10.2" cy="10.6" r="1.1" fill="currentColor"/><circle cx="5.4" cy="11.2" r="1.1" fill="currentColor"/><circle cx="2.4" cy="9.6" r="0.8" fill="currentColor"/><circle cx="13.4" cy="8.6" r="0.8" fill="currentColor"/></svg><span>Draw samples</span></button></div>
       </aside>
     </div>
     <p class="note" id="a-note"></p>
-    <dialog class="src-dlg smp-dlg" id="dlg-smp" aria-label="Draws from the standard Gaussian in one, two and three dimensions">
-      <div class="smp-in">
-        <button class="src-x" type="button" aria-label="Close">×</button>
-        <p class="src-sub">Each dot is one draw from the standard Gaussian. Below each cloud is the distribution of the distance of each draw from the center.</p>
-        <div class="smp-ctl"><button class="btn" id="smp-one" type="button">Draw one</button><button class="btn" id="smp-go" type="button">Draw 3,000</button><button class="btn" id="smp-again" type="button">Start again</button><span class="smp-n" id="smp-n"></span></div>
-        <div class="smp-grid">
-          <figure class="smp-p"><div class="smp-h"><span class="mini-head">One dimension</span><span class="smp-last" id="smp-l1"></span></div><div class="smp-f"><span class="tx">f(x) = \frac{1}{\sqrt{2\pi}}\,e^{-x^2/2}</span></div><div class="cv-wrap"><canvas id="cv-s1" aria-label="Draws of X on a line, and the distribution of their distance from the center"></canvas></div><figcaption><span class="tx">R = |X|</span>, with density <span class="tx">\sqrt{2/\pi}\, e^{-r^2/2}</span></figcaption></figure>
-          <figure class="smp-p"><div class="smp-h"><span class="mini-head">Two dimensions</span><span class="smp-last" id="smp-l2"></span></div><div class="smp-f"><span class="tx">f(x, y) = \frac{1}{2\pi}\,e^{-(x^2+y^2)/2}</span></div><div class="cv-wrap"><canvas id="cv-s2" aria-label="Draws of (X, Y) in the plane, and the distribution of their distance from the center"></canvas></div><figcaption><span class="tx">R = \sqrt{X^2 + Y^2}</span>, with density <span class="tx">r\, e^{-r^2/2}</span></figcaption></figure>
-          <figure class="smp-p"><div class="smp-h"><span class="mini-head">Three dimensions</span><span class="smp-last" id="smp-l3"></span></div><div class="smp-f"><span class="tx">f(x, y, z) = \frac{1}{(2\pi)^{3/2}}\,e^{-(x^2+y^2+z^2)/2}</span></div><div class="cv-wrap"><canvas id="cv-s3" class="grab" aria-label="Draws of (X, Y, Z) in space, turning slowly, and the distribution of their distance from the center"></canvas></div><figcaption><span class="tx">R = \sqrt{X^2 + Y^2 + Z^2}</span>, with density <span class="tx">\sqrt{2/\pi}\, r^2 e^{-r^2/2}</span></figcaption></figure>
-        </div>
-      </div>
-    </dialog>
   </section>
 
   <section class="sec" id="s4" aria-labelledby="h4-t">
@@ -547,8 +529,20 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
     </dialog>
   </section>
 
+  <section class="sec" id="s-draws" aria-labelledby="hd-t">
+    <div class="sec-head"><div class="num" aria-hidden="true">V</div><h2 id="hd-t">Where the draws land</h2><p class="idea">Each dot is one draw from the standard Gaussian. Below each cloud is the distribution of the distance of each draw from the center.</p></div>
+    <div class="plate smp-plate">
+      <div class="smp-ctl"><button class="btn" id="smp-one" type="button">Draw one</button><button class="btn" id="smp-go" type="button">Draw 3,000</button><button class="btn" id="smp-again" type="button">Start again</button><span class="smp-n" id="smp-n"></span></div>
+      <div class="smp-grid">
+          <figure class="smp-p"><div class="smp-h"><span class="mini-head">One dimension</span><span class="smp-last" id="smp-l1"></span></div><div class="smp-f"><span class="tx">f(x) = \frac{1}{\sqrt{2\pi}}\,e^{-x^2/2}</span></div><div class="cv-wrap"><canvas id="cv-s1" aria-label="Draws of X on a line, and the distribution of their distance from the center"></canvas></div><figcaption><span class="tx">R = |X|</span>, with density <span class="tx">\sqrt{2/\pi}\, e^{-r^2/2}</span></figcaption></figure>
+          <figure class="smp-p"><div class="smp-h"><span class="mini-head">Two dimensions</span><span class="smp-last" id="smp-l2"></span></div><div class="smp-f"><span class="tx">f(x, y) = \frac{1}{2\pi}\,e^{-(x^2+y^2)/2}</span></div><div class="cv-wrap"><canvas id="cv-s2" aria-label="Draws of (X, Y) in the plane, and the distribution of their distance from the center"></canvas></div><figcaption><span class="tx">R = \sqrt{X^2 + Y^2}</span>, with density <span class="tx">r\, e^{-r^2/2}</span></figcaption></figure>
+          <figure class="smp-p"><div class="smp-h"><span class="mini-head">Three dimensions</span><span class="smp-last" id="smp-l3"></span></div><div class="smp-f"><span class="tx">f(x, y, z) = \frac{1}{(2\pi)^{3/2}}\,e^{-(x^2+y^2+z^2)/2}</span></div><div class="cv-wrap"><canvas id="cv-s3" class="grab" aria-label="Draws of (X, Y, Z) in space, turning slowly, and the distribution of their distance from the center"></canvas></div><figcaption><span class="tx">R = \sqrt{X^2 + Y^2 + Z^2}</span>, with density <span class="tx">\sqrt{2/\pi}\, r^2 e^{-r^2/2}</span></figcaption></figure>
+      </div>
+    </div>
+  </section>
+
   <section class="sec" id="s6" aria-labelledby="h6-t">
-    <div class="sec-head"><div class="num" aria-hidden="true">V</div><h2 id="h6-t">Round and square: only the Gaussian</h2><p class="idea"><b>Round</b> means rotationally invariant, so <span class="tx">f</span> depends only on <span class="tx">x^2 + y^2</span>. <b>Square</b> means <span class="tx">X</span> and <span class="tx">Y</span> are independent with the same distribution, <span class="tx">f(x, y) = g(x)\,g(y)</span>.</p></div>
+    <div class="sec-head"><div class="num" aria-hidden="true">VI</div><h2 id="h6-t">Round and square: only the Gaussian</h2><p class="idea"><b>Round</b> means rotationally invariant, so <span class="tx">f</span> depends only on <span class="tx">x^2 + y^2</span>. <b>Square</b> means <span class="tx">X</span> and <span class="tx">Y</span> are independent with the same distribution, <span class="tx">f(x, y) = g(x)\,g(y)</span>.</p></div>
     <div class="plate rs">
       <div class="rs-left">
         <div class="toolbar"><div class="seg seg2" role="radiogroup" aria-label="What to draw"><input type="radio" name="rs-view" id="rv-b" value="bump" checked><label for="rv-b">Joint density</label><input type="radio" name="rs-view" id="rv-w" value="walls"><label for="rv-w">Product of the marginals</label></div></div>
@@ -568,7 +562,7 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   </section>
 
   <section class="sec" id="s-clt" aria-labelledby="hclt-t">
-    <div class="sec-head"><div class="num" aria-hidden="true">VI</div><h2 id="hclt-t">The central limit theorem</h2><p class="idea has-term">Add up <span class="term" tabindex="0" aria-describedby="tip-ind">independent<span class="tip" role="tooltip" id="tip-ind">We can even relax this assumption and allow for weak dependence, like rainy days that come in streaks. The sum still ends up close to normal, though with a different standard deviation than independence would give.</span></span>, <span class="term" tabindex="0" aria-describedby="tip-id">identically distributed<span class="tip" role="tooltip" id="tip-id">We can even relax this assumption and allow the <span class="tx">X_i</span> to have different distributions, as long as no single one dominates the sum.</span></span> random variables <span class="tx">X_1, X_2, \ldots, X_n</span> and you get a new random variable <span class="tx">S_n</span> with its own distribution. What happens to its shape as <span class="tx">n</span> grows? Does it depend on the distribution of the components?</p></div>
+    <div class="sec-head"><div class="num" aria-hidden="true">VII</div><h2 id="hclt-t">The central limit theorem</h2><p class="idea has-term">Add up <span class="term" tabindex="0" aria-describedby="tip-ind">independent<span class="tip" role="tooltip" id="tip-ind">We can even relax this assumption and allow for weak dependence, like rainy days that come in streaks. The sum still ends up close to normal, though with a different standard deviation than independence would give.</span></span>, <span class="term" tabindex="0" aria-describedby="tip-id">identically distributed<span class="tip" role="tooltip" id="tip-id">We can even relax this assumption and allow the <span class="tx">X_i</span> to have different distributions, as long as no single one dominates the sum.</span></span> random variables <span class="tx">X_1, X_2, \ldots, X_n</span> and you get a new random variable <span class="tx">S_n</span> with its own distribution. What happens to its shape as <span class="tx">n</span> grows? Does it depend on the distribution of the components?</p></div>
     <div class="plate">
       <div class="clt-ctl">
         <div class="clt-block">
@@ -624,7 +618,7 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
 
   <footer>
     <div>Heights in III are measured standing heights of adults 20 and older in the CDC's National Health and Nutrition Examination Survey, 2009–2012 (<span id="ft-n"></span>), from the raw, unweighted survey sample (NHANESraw) in the R package NHANES.</div>
-    <div>Rain in VI is measured daily at Seattle–Tacoma International Airport, 1948 to 2025 (NOAA Global Historical Climatology Network).</div>
+    <div>Rain in VII is measured daily at Seattle–Tacoma International Airport, 1948 to 2025 (NOAA Global Historical Climatology Network).</div>
     <div class="credit">© 2026 Louis Mittel · <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></div>
   </footer>
 </div>
@@ -1694,7 +1688,7 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   $("v-k3").addEventListener("input", (e) => { V.eps = +e.target.value; vDraw(); });
 
   // =====================================================================
-  // VI. Round and square: only the bell
+  // VI. Round and square: only the bell (V is where the draws land)
   //   bumps f = exp(-(|x|^p + |y|^p)^(q/p) / q)
   //   square (independent) exactly when q = p;  round exactly when p = 2
   // =====================================================================
@@ -2042,7 +2036,7 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   }
 
   // =====================================================================
-  // VI. The central limit theorem, with a die or a coin you can reshape
+  // VII. The central limit theorem, with a die or a coin you can reshape
   // =====================================================================
   const DPRE = {
     fair: { kind: "die", lab: "Fair", w: [1, 1, 1, 1, 1, 1] },
@@ -2617,7 +2611,7 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   }
   function midCap() {
     const coin = MID.kind === "coin", names = { 1: "one", 2: "two", 3: "three", 4: "four", 8: "eight" }, what = names[MID.n] + " " + (coin ? (MID.n === 1 ? "coin" : "coins") : MID.n === 1 ? "die" : "dice");
-    $("mid-cap").innerHTML = "Each bead is one outcome of the " + (coin ? "coins" : "dice") + ", strung on the wire for its " + (coin ? "number of heads" : "sum") + ". As " + (coin ? "coins" : "dice") + " are added, the standardized sum converges to the normal. <a href=\"#s-clt\">See VI</a>.";
+    $("mid-cap").innerHTML = "Each bead is one outcome of the " + (coin ? "coins" : "dice") + ", strung on the wire for its " + (coin ? "number of heads" : "sum") + ". As " + (coin ? "coins" : "dice") + " are added, the standardized sum converges to the normal. <a href=\"#s-clt\">See VII</a>.";
     $("cv-mid").setAttribute("aria-label", "Every way " + what + " can land, drawn as beads on vertical wires, one wire per sum, turning slowly. The middle wires hold the most beads. Below, each wire's share of the beads, under the normal curve.");
   }
   // how many dice or coins: its own choices for each
@@ -2660,10 +2654,12 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   const smpFR = [(r) => 2 * Math.exp(-r * r / 2) / Math.sqrt(2 * Math.PI), (r) => r * Math.exp(-r * r / 2), (r) => Math.sqrt(2 / Math.PI) * r * r * Math.exp(-r * r / 2)], smpMode = [0, 1, Math.SQRT2];
   const smpCol = (r) => rgb2(heightCol(0.14 + 0.86 * Math.exp(-r * r / 2)));
   function smpNormal() { let u = 0; while (u === 0) u = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * Math.random()); }
-  function smpReset() {
+  function smpReset(start = true) {
     SMP.pts = [1, 2, 3].map((d) => Float32Array.from({ length: SMP.max * d }, smpNormal)); SMP.jit = Float32Array.from({ length: SMP.max }, () => Math.random() * 2 - 1);
     SMP.R = [1, 2, 3].map((d, k) => Float32Array.from({ length: SMP.max }, (_, i) => { let q = 0; for (let j = 0; j < d; j++) { const v = SMP.pts[k][i * d + j]; q += v * v; } return Math.sqrt(q); }));
-    SMP.N = 0; SMP.run = false; SMP.drawn = [0, 0, 0]; SMP.dirty = true;   // it opens empty, and the reader chooses one draw at a time or the run
+    SMP.drawn = [0, 0, 0]; SMP.dirty = true;
+    // the draws start on their own, from zero; with reduced motion all of them arrive at once
+    if (!start) { SMP.N = 0; SMP.run = false; } else if (RM) { SMP.N = SMP.max; SMP.run = false; } else { SMP.N = 0; SMP.t0 = performance.now(); SMP.run = true; }
   }
   // slowly at first, one draw at a time, then faster until the shapes fill in
   const smpCount = (t) => Math.min(SMP.max, Math.floor(3 * t + 0.25 * t * t * t));   // about 22 seconds to 3,000
@@ -2672,7 +2668,7 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   // one panel: the cloud, the newest draw, and the histogram of distances. The flat clouds keep their dots on a
   // layer and add only the new ones; the turning cloud in space is redrawn whole
   function smpPanel(k) {
-    const d = k + 1, N = SMP.N, cv = $("cv-s" + d), Wp = Math.max(240, Math.floor(cv.parentElement.clientWidth)), stacked = window.matchMedia("(max-width: 760px)").matches;
+    const d = k + 1, N = SMP.N, cv = $("cv-s" + d), Wp = Math.max(240, Math.floor(cv.parentElement.clientWidth)), stacked = window.matchMedia("(max-width: 880px)").matches;
     const S = d === 1 && stacked ? Math.round(Wp * 0.34) : Wp, Hh = Math.round(Wp * 0.42), { ctx, W } = fit(cv, S + Hh + 26, 2);
     const P = SMP.pts[k], R = SMP.R[k], cx = W / 2, cy = S / 2, sc = W / 7.4, [rd, al] = smpStyle(N), fmt = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(2);
     const ca = Math.cos(SMP.ang), sa = Math.sin(SMP.ang), ce = Math.cos(0.42), se = Math.sin(0.42);
@@ -2715,29 +2711,33 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
     const full = SMP.N >= SMP.max; $("smp-go").textContent = SMP.run ? "Pause" : "Draw " + SMP.max.toLocaleString("en-US"); $("smp-go").disabled = full; $("smp-one").disabled = full;
   }
   function smpLoop(now) {
-    if (!$("dlg-smp").open) return;
+    const el = now - (SMP.last || now); SMP.last = now;
+    if (!SMP.vis) { if (SMP.run) SMP.t0 += el; requestAnimationFrame(smpLoop); return; }   // off screen, the run's clock waits
     let grew = false;
     if (SMP.run) { const n = smpCount((now - SMP.t0) / 1000); if (n > SMP.N) { SMP.N = n; grew = true; } if (SMP.N >= SMP.max) SMP.run = false; }
-    if (!RM && !SMP.drag) SMP.ang += Math.min(0.05, (now - (SMP.last || now)) / 1000) * 0.25;
-    SMP.last = now;
+    if (!RM && !SMP.drag) SMP.ang += Math.min(0.05, el / 1000) * 0.25;
     if (grew || SMP.dirty) { SMP.dirty = false; SMP.d3At = now; smpDraw(); }
-    else if (now - (SMP.d3At || 0) > 33) { SMP.d3At = now; smpPanel(2); }   // only the turning cloud moves
+    else if (!RM && now - (SMP.d3At || 0) > 33) { SMP.d3At = now; smpPanel(2); }   // only the turning cloud moves
     requestAnimationFrame(smpLoop);
   }
+
   {
-    const dlg = $("dlg-smp");
-    $("smp-open").addEventListener("click", () => { dlg.showModal(); dlg.scrollTop = 0; smpReset(); SMP.last = 0; smpDraw(); requestAnimationFrame(smpLoop); });
-    dlg.querySelector(".src-x").addEventListener("click", () => dlg.close());
-    dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
+    smpReset(false);
     $("smp-go").addEventListener("click", () => {
+      SMP.started = true;
       if (SMP.run) SMP.run = false;
       else if (RM) SMP.N = SMP.max;
       else if (SMP.N < SMP.max) { SMP.t0 = performance.now() - 1000 * smpTime(SMP.N + 1); SMP.run = true; }
       smpDraw();
     });
-    $("smp-one").addEventListener("click", () => { SMP.run = false; if (SMP.N < SMP.max) SMP.N++; smpDraw(); });
-    $("smp-again").addEventListener("click", () => { smpReset(); smpDraw(); });
+    $("smp-one").addEventListener("click", () => { SMP.started = true; SMP.run = false; if (SMP.N < SMP.max) SMP.N++; smpDraw(); });
+    $("smp-again").addEventListener("click", () => { SMP.started = true; smpReset(); smpDraw(); });
     onDrag($("cv-s3"), { down: (p) => { SMP.drag = p; }, move: (p) => { SMP.ang += (p.x - SMP.drag.x) * 0.012; SMP.drag = p; if (RM) smpDraw(); }, up: () => { SMP.drag = null; } });
+    // the run starts the first time the section is well in view
+    const grid = document.querySelector(".smp-grid");
+    if (window.IntersectionObserver) new IntersectionObserver((es) => es.forEach((e) => { SMP.vis = e.isIntersecting; if (e.intersectionRatio >= 0.3 && !SMP.started) { SMP.started = true; smpReset(); } }), { threshold: [0, 0.3] }).observe(grid);
+    else { SMP.vis = SMP.started = true; smpReset(); }
+    requestAnimationFrame(smpLoop);
   }
 
   // a hover note also opens on a tap, for touch screens; another tap, a tap on the note, a tap elsewhere or Escape closes it
@@ -2770,7 +2770,7 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
     if (side) vDrawSide();
     requestAnimationFrame(loop);
   }
-  function renderAll() { readTheme(); dDraw(); aDraw(); tDraw(); zDraw(); vDraw(); rsDraw(); midDraw(); if ($("dlg-src").open) srcDraw(); if ($("dlg-smp").open) smpDraw(); }
+  function renderAll() { readTheme(); dDraw(); aDraw(); tDraw(); zDraw(); vDraw(); rsDraw(); midDraw(); if ($("dlg-src").open) srcDraw(); smpDraw(); }
   let lastW = 0;
   const ro = window.ResizeObserver ? new ResizeObserver(() => { const w = document.body.clientWidth; if (w !== lastW) { lastW = w; requestAnimationFrame(renderAll); } }) : null;
   if (ro) ro.observe(document.body); else window.addEventListener("resize", renderAll);
