@@ -313,7 +313,24 @@ input[type="range"]::-moz-range-thumb { box-sizing: border-box; width: 18px; hei
 .src-foot { margin-top: 8px; font: 400 13.5px/1.45 var(--font-ui); color: var(--ink-2); }
 .src-foot:empty { display: none; }
 .src-foot .tot { font-weight: 600; }
-@media (max-width: 780px) { .src-in { grid-template-columns: minmax(0, 1fr); padding: 14px 14px 16px; } .src-tw { max-height: 52vh; } }
+.src-cap2 { display: none; }
+/* phones: a full-screen sheet with one scroll. The close button and the equation with its chart stay pinned while the table scrolls under them. */
+@media (max-width: 780px) {
+  .src-dlg { width: 100%; height: 100vh; height: 100dvh; max-width: none; max-height: none; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+  .src-in { grid-template-columns: minmax(0, 1fr); gap: 14px; padding: 14px 14px 28px; }
+  .src-left { display: contents; }
+  .src-pin { position: sticky; top: 0; z-index: 2; background: var(--surface); padding-top: 8px; box-shadow: 0 1px 0 var(--line); }
+  .src-eq { min-height: 0; margin: 0 46px 4px 0; }
+  .src-eq .src-cap { display: none; }
+  .src-cap2 { display: block; margin: 0; font: 400 13.5px/1.45 var(--font-ui); color: var(--ink-2); }
+  .src-dlg { overflow-x: hidden; }
+  .src-tw { max-height: none; overflow: visible; border-top: 0; }
+  .src-t th { top: var(--src-pin, 0px); }
+  .src-t th, .src-t td.r, .src-t td.om { white-space: normal; }
+  .src-t td .dec { display: block; margin-left: 0; }
+  #dlg-src .src-x { position: fixed; top: 8px; right: 8px; z-index: 3; width: 38px; height: 38px; padding: 0; display: grid; place-items: center; font-size: 24px; border-radius: 50%; background: var(--surface); border: 1px solid var(--line); box-shadow: 0 4px 14px -6px rgba(0,0,0,.35); }
+}
+@media (max-width: 360px) { .src-t { font-size: 13px; } .src-t th, .src-t td { padding-left: 5px; padding-right: 5px; } .src-t .cls, .src-t .cls.set { margin-right: 6px; font-size: 11.5px; } .src-t th math { font-size: 12.5px; } .src-t .dec { font-size: 11.5px; } .src-t td.r { font-size: 12px; } }
 @media (max-width: 640px) { .clt-rows { grid-template-columns: minmax(0, 1fr); gap: 4px; } .clt-rows .tb-label { margin-top: 6px; } .clt-f { width: 100%; } }
 .people { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
 @media (max-width: 700px) { .people { grid-template-columns: minmax(0, 1fr); } }
@@ -498,7 +515,7 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   </section>
 
   <section class="sec" id="s5" aria-labelledby="h5-t">
-    <div class="sec-head"><div class="num" aria-hidden="true">IV</div><h2 id="h5-t">Where does π come from?</h2><p class="idea">The kernel <span class="tx">e^{-x^2/2}</span> has no closed form antiderivative, so the area <span class="tx">A</span> under it cannot be found directly. The two-dimensional Gaussian looks harder but is easier, and <span class="tx">A</span> can be recovered from its volume.</p></div>
+    <div class="sec-head"><div class="num" aria-hidden="true">IV</div><h2 id="h5-t">Where does π come from?</h2><p class="idea">The kernel <span class="tx">e^{-x^2/2}</span> has no closed form antiderivative, so the area <span class="tx">A</span> under it cannot be found directly. The two-dimensional Gaussian looks harder but is easier, and <span class="tx">A</span> can be recovered from its volume. And π emerges because that bell is built out of circles.</p></div>
     <div class="plate split5">
       <div>
         <div class="toolbar"><div class="seg" role="radiogroup" aria-label="What to do to the surface"><input type="radio" name="v-mode" id="vm-r" value="ring" checked><label for="vm-r">Unroll</label><input type="radio" name="v-mode" id="vm-s" value="slice"><label for="vm-s">Slice</label><input type="radio" name="v-mode" id="vm-b" value="dozer"><label for="vm-b">Bulldoze</label><input type="radio" name="v-mode" id="vm-m" value="walls"><label for="vm-m">Multiply</label></div><button class="tog" type="button" id="v-vol" aria-pressed="false" hidden>ε-square volume</button></div>
@@ -603,8 +620,11 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
           </div>
         </div>
         <div class="src-left">
-          <div class="src-eq" id="src-eq" aria-live="polite"></div>
-          <div class="cv-wrap"><canvas id="cv-src" tabindex="0" aria-label="The distribution of the sum, each bar built from tiles. Choose k by clicking a bar, or with the arrow keys."></canvas></div>
+          <div class="src-pin" id="src-pin">
+            <div class="src-eq" id="src-eq" aria-live="polite"></div>
+            <div class="cv-wrap"><canvas id="cv-src" tabindex="0" aria-label="The distribution of the sum, each bar built from tiles. Choose k by clicking a bar, or with the arrow keys."></canvas></div>
+          </div>
+          <p class="src-cap2" id="src-cap2" aria-hidden="true"></p>
         </div>
         <div class="src-right">
           <div class="src-rtop"><div class="seg" role="radiogroup" aria-label="Table" id="src-view"><input type="radio" name="src-view" id="sv-out" value="out"><label for="sv-out">Every outcome</label><input type="radio" name="src-view" id="sv-sum" value="sum"><label for="sv-sum">Grouped by sum</label></div>
@@ -1136,7 +1156,7 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
     const tall = (z) => (Math.abs(z) < 0.25 ? "about average" : Math.abs(z) < 1 ? (z > 0 ? "above average" : "below average") : Math.abs(z) < 2 ? (z > 0 ? "tall" : "short") : (z > 0 ? "very tall" : "very short"));
     if (dz < 0.03) note = "A woman at " + ftin(Z.w) + " and a man at " + ftin(Z.m) + " share " + M`z = ${fx(zs.w, 2)}` + ", so under the normal model both are at percentile " + pctl(Phi(zs.w)) + " of their group.";
     else if (Math.abs(Z.w - Z.m) < 0.25) note = "The same " + ftin(Z.w) + " is " + tall(zs.w) + " for a woman " + "(" + M`z = ${fx(zs.w, 2)}` + ") and " + tall(zs.m) + " for a man (" + M`z = ${fx(zs.m, 2)}` + ").";
-    else note = "Each fan of lines carries one group's heights to " + M`z = (x - \mu)/\sigma` + ", and both groups land on the same standard normal.";
+    else note = "";
     $("z-note").innerHTML = glue(note);
     rareDraw(zs);
   }
@@ -2374,7 +2394,8 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
     return tex(lhs + " = " + (mid ? mid + " = " : "") + total) + '<span class="src-cap">' + cap + "</span>";
   }
   function srcDraw() {
-    const M = SRC.M, cv = $("cv-src"), { ctx, W, H } = fit(cv, window.innerWidth < 600 ? 230 : 330);
+    const M = SRC.M, cv = $("cv-src"), sheet = srcSheet(), { ctx, W, H } = fit(cv, sheet ? Math.max(170, Math.min(230, Math.round(window.innerHeight * 0.3))) : window.innerWidth < 600 ? 230 : 330);
+    $("dlg-src").style.setProperty("--src-pin", (sheet ? $("src-pin").offsetHeight : 0) + "px");
     const x0 = 46, x1 = W - 8, top = 48, base = H - 34, ks = M.ks, nk = ks.length, slot = (x1 - x0) / nk, bw = Math.max(3, Math.min(44, slot * 0.8));
     let maxP = 0; ks.forEach((k) => { maxP = Math.max(maxP, M.groups.get(k).pr); });
     const scale = (base - top) / (maxP * 1.1), maxOuts = Math.max(...ks.map((k) => M.groups.get(k).outs.length)), perOut = maxOuts <= 40;
@@ -2401,14 +2422,16 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
     text(ctx, M.kind === "coin" ? "k, heads in " + M.n + " tosses" : "k, sum of " + M.n + " rolls", x1, H - 2, F_LAB, C["ink-2"], "right");
     // what a tile is, and the tile under the pointer
     // the pointer can rest on an outcome (a tile, or a row of the table) or on a set of faces (a tile when tiles are grouped)
-    const hv = SRC.hov, cap = !hv ? (perOut ? "Each tile is one outcome" : "Each tile is one set of faces, in every possible order")
+    const hv = SRC.hov, cap = !hv ? (perOut ? "Each tile is one outcome" : W < 380 ? "Each tile is a set of faces, in all orders" : "Each tile is one set of faces, in every possible order")
       : hv.t ? srcTup(hv.t) + " has probability " + srcFr(hv.num, hv.pr)
       : srcTup(hv.faces) + " in " + hv.m + (hv.m > 1 ? " orders, " : " order, ") + srcFr(hv.num, hv.pr) + (hv.m > 1 ? " each" : "");
     // a swatch keys the tile colour to what a tile stands for
     ctx.font = F_DISP(15, 600); const tw = ctx.measureText("The pmf of ").width;
     text(ctx, "The pmf of ", 0, 15, F_DISP(15, 600), C.ink, "left"); haloSup(ctx, "S_{" + M.n + "}", tw + 1, 15, 16, C.ink, "left");
     ctx.fillStyle = hv ? C.b2 : perOut ? C.b3 : C.b0; ctx.fillRect(1, 26, 12, 12);
-    halo(ctx, cap, 19, 36, hv ? F_DISP(14, 600) : F_LAB, hv ? C.ink : C["ink-2"], "left");
+    let capFont = F_LAB;   // the caption under the pointer shrinks until it fits a narrow chart
+    if (hv) for (let fs = 14; fs >= 10; fs--) { capFont = F_DISP(fs, 600); ctx.font = capFont; if (ctx.measureText(cap).width <= W - 22) break; }
+    halo(ctx, cap, 19, 36, capFont, hv ? C.ink : C["ink-2"], "left");
   }
   function srcTable() {
     const M = SRC.M, n = M.n, ev = srcEvent(), big = M.outs.length > SRC_ROWS;
@@ -2459,6 +2482,7 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
     document.querySelectorAll('input[name="src-view"]').forEach((el) => { el.checked = el.value === SRC.view; });
     $("src-eq").innerHTML = srcEquation(); srcFitEq();
     const sc = $("src-tw").scrollTop; srcTable(); if (keepScroll) $("src-tw").scrollTop = sc;
+    const cap = $("src-eq").querySelector(".src-cap"); $("src-cap2").innerHTML = cap ? cap.innerHTML : "";
     srcDraw();
   }
   function srcFitEq() {
@@ -2466,7 +2490,14 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
     while (fs > 11 && m.getBoundingClientRect().width > box.clientWidth) { fs -= 1; box.style.fontSize = fs + "px"; }
   }
   function srcSetN(n) { SRC.open = null; SRC.n = n; SRC.M = srcBuild(n); SRC.k = SRC.M.mode; SRC.hov = null; SRC.view = SRC.M.outs.length <= 36 ? "out" : "sum"; srcRender(); }
-  function srcScrollTo(el) { const tw = $("src-tw"), a = el.getBoundingClientRect(), b = tw.getBoundingClientRect(); tw.scrollTop += a.top - b.top - (tw.clientHeight - el.offsetHeight) / 2; }
+  // on a phone the whole sheet scrolls under the pinned chart; elsewhere only the table scrolls
+  const srcSheet = () => window.matchMedia("(max-width: 780px)").matches;
+  function srcPane() {
+    const sheet = srcSheet(), sc = sheet ? $("dlg-src") : $("src-tw"), r = sc.getBoundingClientRect(), th = $("src-tw").querySelector("th");
+    return { sc, top: r.top + (sheet ? $("src-pin").offsetHeight : 0) + (th ? th.offsetHeight : 30), bottom: r.bottom };
+  }
+  function srcSeen(el) { const p = srcPane(), a = el.getBoundingClientRect(); return a.top >= p.top && a.bottom <= p.bottom; }
+  function srcScrollTo(el) { const p = srcPane(), a = el.getBoundingClientRect(); p.sc.scrollTop += a.top - p.top - (p.bottom - p.top - el.offsetHeight) / 2; }
   function srcSetK(k, scroll) {
     const M = SRC.M; SRC.k = clamp(k, M.ks[0], M.ks[M.ks.length - 1]); srcRender(true);
     if (scroll) { const el = SRC.view === "sum" ? $("src-tw").querySelector('tr[data-k="' + SRC.k + '"]') : $("src-tw").querySelector("tr.in"); if (el) srcScrollTo(el); }
@@ -2481,35 +2512,47 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   // the table picks the event, and its rows light up their tiles
   $("src-tw").addEventListener("click", (e) => {
     const chip = e.target.closest("button.cls"); if (chip) { SRC.open = SRC.open === chip.dataset.c ? null : chip.dataset.c; }
-    const tr = e.target.closest("tr"); if (!tr || !tr.parentElement || tr.parentElement.tagName !== "TBODY") return; if (tr.dataset.k) srcSetK(+tr.dataset.k); else { const o = SRC.M.outs[+tr.id.slice(4)]; if (o) srcSetK(o.s); } });
+    const tr = e.target.closest("tr"); if (!tr || !tr.parentElement || tr.parentElement.tagName !== "TBODY") return; if (tr.dataset.k) srcSetK(+tr.dataset.k); else { const o = SRC.M.outs[+tr.id.slice(4)]; if (o) srcSetK(o.s); }
+    if (srcNoHover()) srcRowHov(e.target);   // without a hover, a tap on a row also lights its tiles
+  });
   // the pointer on an outcome or a set of faces lights its tiles; elsewhere in the table nothing is lit
-  $("src-tw").addEventListener("pointerover", (e) => {
-    const M = SRC.M, el = e.target.closest("[data-o], [data-c], tbody tr"); let hv = null;
+  // on a touch screen there is no hover, and the browser's stand-in mouse events after a scroll would light the wrong row
+  const srcNoHover = () => window.matchMedia("(hover: none)").matches;
+  function srcRowHov(target) {
+    const M = SRC.M, el = target.closest("[data-o], [data-c], tbody tr"); let hv = null;
     if (el && el.dataset.o) hv = M.outs[+el.dataset.o];
     else if (el && el.dataset.c) { const [k, i] = el.dataset.c.split(":"); hv = [...M.groups.get(+k).cls.values()][+i]; }
     else if (el && el.id && el.id.startsWith("sro-")) hv = M.outs[+el.id.slice(4)];
     if (hv !== SRC.hov) { SRC.hov = hv; srcDraw(); }
-  });
-  $("src-tw").addEventListener("pointerleave", () => { if (SRC.hov) { SRC.hov = null; srcDraw(); } });
+  }
+  $("src-tw").addEventListener("pointerover", (e) => { if (e.pointerType !== "touch" && !srcNoHover()) srcRowHov(e.target); });
+  $("src-tw").addEventListener("pointerleave", () => { if (SRC.hov && !srcNoHover()) { SRC.hov = null; srcDraw(); } });
   const srcHit = (pt) => { const g = SRC.geo; if (!g) return null; return g.tiles.find((t) => pt.x >= t.xa && pt.x <= t.xb && pt.y >= t.ya - 0.5 && pt.y <= t.yb + 0.5) || null; };
-  onDrag($("cv-src"), {
-    down: (pt) => { const t = srcHit(pt), b = SRC.geo && SRC.geo.bars.find((q) => pt.x >= q.xa && pt.x < q.xb); if (t || b) srcSetK((t || b).k, true); return false; },
-    hover: (pt) => {
-      const t = srcHit(pt), u = t ? t.u : null, b = SRC.geo && SRC.geo.bars.find((q) => pt.x >= q.xa && pt.x < q.xb);
-      $("cv-src").style.cursor = b ? "pointer" : "default";
-      if (u !== SRC.hov) {
-        document.querySelectorAll("#src-tw tr.hov, #src-tw .hl").forEach((r) => r.classList.remove("hov", "hl"));
-        SRC.hov = u; srcDraw();
-        if (u && SRC.view === "sum") {
-          const cls = [...SRC.M.groups.get(t.k).cls.values()], c = u.t ? u.c : u;
-          const el = SRC.M.n <= 2 && u.t ? $("src-tw").querySelector('[data-o="' + u.i + '"]') : $("src-tw").querySelector('[data-c="' + t.k + ":" + cls.indexOf(c) + '"]');
-          if (el) { el.classList.add("hl"); const tw = $("src-tw"), a = el.getBoundingClientRect(), b = tw.getBoundingClientRect(); if (a.top < b.top + 34 || a.bottom > b.bottom) srcScrollTo(el); }
-        }
-        if (u && u.t && SRC.view === "out") { const r = $("sro-" + u.i); if (r) { r.classList.add("hov"); const tw = $("src-tw"), a = r.getBoundingClientRect(), b = tw.getBoundingClientRect(); if (a.top < b.top + 34 || a.bottom > b.bottom) srcScrollTo(r); } }
-      }
-    },
-    leave: () => { if (SRC.hov) { SRC.hov = null; srcDraw(); document.querySelectorAll("#src-tw tr.hov, #src-tw .hl").forEach((r) => r.classList.remove("hov", "hl")); } },
+  $("cv-src").addEventListener("click", (e) => {
+    const r = $("cv-src").getBoundingClientRect(), pt = { x: e.clientX - r.left, y: e.clientY - r.top };
+    const t = srcHit(pt), b = SRC.geo && SRC.geo.bars.find((q) => pt.x >= q.xa && pt.x < q.xb); if (!(t || b)) return;
+    srcSetK((t || b).k, true);
+    SRC.hov = null; srcPoint(pt);   // the table was redrawn, so light the tapped tile and its row again
   });
+  onDrag($("cv-src"), {
+    down: () => false,
+    hover: (pt, e) => { if (e && e.pointerType !== "touch" && !srcNoHover()) srcPoint(pt); },
+    leave: () => { if (SRC.hov && !srcNoHover()) { SRC.hov = null; srcDraw(); document.querySelectorAll("#src-tw tr.hov, #src-tw .hl").forEach((r) => r.classList.remove("hov", "hl")); } },
+  });
+  function srcPoint(pt) {
+    const t = srcHit(pt), u = t ? t.u : null, b = SRC.geo && SRC.geo.bars.find((q) => pt.x >= q.xa && pt.x < q.xb);
+    $("cv-src").style.cursor = b ? "pointer" : "default";
+    if (u !== SRC.hov) {
+      document.querySelectorAll("#src-tw tr.hov, #src-tw .hl").forEach((r) => r.classList.remove("hov", "hl"));
+      SRC.hov = u; srcDraw();
+      if (u && SRC.view === "sum") {
+        const cls = [...SRC.M.groups.get(t.k).cls.values()], c = u.t ? u.c : u;
+        const el = SRC.M.n <= 2 && u.t ? $("src-tw").querySelector('[data-o="' + u.i + '"]') : $("src-tw").querySelector('[data-c="' + t.k + ":" + cls.indexOf(c) + '"]');
+        if (el) { el.classList.add("hl"); if (!srcSeen(el)) srcScrollTo(el); }
+      }
+      if (u && u.t && SRC.view === "out") { const r = $("sro-" + u.i); if (r) { r.classList.add("hov"); if (!srcSeen(r)) srcScrollTo(r); } }
+    }
+  }
   $("src-open").addEventListener("click", () => {
     const act = D.hov >= 0 ? D.hov : D.pin, n = act >= 0 && act < 6 ? act + 1 : 2;
     SRC.op = "eq"; SRC.only = false; $("dlg-src").showModal(); srcSetN(n); srcSetK(SRC.k, true); $("dlg-src").scrollTop = 0;
