@@ -221,8 +221,9 @@ input[type="range"]::-moz-range-thumb { box-sizing: border-box; width: 18px; hei
 .idea.has-term, .v-obs.has-term { position: relative; }
 .term { border-bottom: 1px dotted var(--muted); cursor: help; outline: none; }
 .term:focus-visible { outline: 2px solid var(--b1); outline-offset: 2px; border-radius: 2px; }
-.term .tip { display: none; position: absolute; left: 0; top: calc(100% + 6px); width: min(460px, 100%); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 13px; font: 400 14px/1.5 var(--font-ui); color: var(--ink); box-shadow: var(--shadow); z-index: 6; white-space: normal; }
+.term .tip { display: none; position: absolute; left: 0; top: calc(100% + 9px); width: max-content; max-width: min(460px, 100%); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 13px; font: 400 14px/1.5 var(--font-ui); color: var(--ink); box-shadow: var(--shadow); z-index: 6; white-space: normal; }
 .term:focus-visible .tip, .term.open .tip { display: block; }
+.term .tip::before { content: ""; position: absolute; top: -6px; left: var(--cx, 18px); width: 10px; height: 10px; margin-left: -5px; background: var(--surface); border-left: 1px solid var(--line); border-top: 1px solid var(--line); transform: rotate(45deg); }   /* points up at its phrase */
 @media (hover: hover) { .term:hover .tip { display: block; } }
 .mini-head.mini-first { margin-top: 0; }
 .yscale { position: absolute; left: 0; top: 0; z-index: 2; background: var(--surface); }
@@ -407,7 +408,9 @@ input[type="range"]::-moz-range-thumb { box-sizing: border-box; width: 18px; hei
 .v-nrow[hidden] { display: none; }
 .v-obs { margin: 16px 0 0; font: italic 400 17px/1.45 var(--font-disp); color: var(--ink-2); max-width: 72ch; }
 .v-obs[hidden] { display: none; }
-.d-data { margin: 0 0 18px; } .d-data[hidden] { display: none; } .d-data .v-obs:first-child { margin-top: 0; } .d-data .tog { margin-top: 12px; } 
+.d-data { margin: 0 0 18px; } .d-data[hidden] { display: none; } .d-data .v-obs:first-child { margin-top: 0; } .d-data .tog { margin-top: 12px; }
+.d-cmp, .d-data #d-note { margin: 10px 0 0; font: 400 14.5px/1.5 var(--font-ui); color: var(--ink-2); max-width: 72ch; } .d-cmp[hidden] { display: none; }
+.d-data #d-note { margin-top: 0; }   /* the rainfall description is plain text like the comparison under it; the italic stays for the one-line chart notes */ 
 .v-nlab { font: italic 400 0.92rem var(--font-disp); color: var(--muted); }
 .v-nrow .seg { padding: 2px; }
 .v-nrow .seg label { padding: 2px 10px; font-size: 13px; }
@@ -602,8 +605,9 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
         </div>
       </div>
       <div class="d-data" id="d-data" hidden>
-        <p class="v-obs has-term" id="d-note">The empirical distribution of daily rainfall at Sea-Tac Airport, 1948 to 2025. Most days have no rain and the rest have a continuous amount, so rainfall is neither discrete nor continuous. The rows add independent draws from this distribution, <span class="term" tabindex="0" aria-describedby="tip-days">which assumes the days are independent<span class="tip" role="tooltip" id="tip-days"></span></span>. Is that reasonable? What changes if it is not?</p>
+        <p class="v-obs has-term" id="d-note">The empirical distribution of daily rainfall at Sea-Tac Airport, 1948 to 2025. Most days have no rain and the rest have a continuous amount, so rainfall is neither discrete nor continuous. The rows add independent draws from this distribution, <span class="term" tabindex="0" aria-describedby="tip-days">which assumes the days are independent<span class="tip" role="tooltip" id="tip-days">Is that reasonable? What changes if it is not?</span></span>.</p>
         <button class="tog" type="button" id="d-years" aria-pressed="false">Compare with actual annual rainfall</button>
+        <p class="d-cmp" id="d-cmp" hidden></p>
       </div>
       <div class="cv-wrap"><canvas id="cv-dice" aria-label="The distribution of a single component, then of the sum of 2, 3, 4, 5 and 6 components, and of a sum of more components set by the slider below, each with the Gaussian the central limit theorem predicts. For a die or a coin, the bars of the first row can be dragged to reshape the component."></canvas><span class="d-head" tabindex="0">largest error<span class="tip" role="tooltip">The largest difference, over all <span class="tx">s</span>, between the exact <span class="tx">P(S_n \le s)</span> for the sum <span class="tx">S_n</span> of <span class="tx">n</span> components and its normal approximation <span class="tx">\Phi((s - n\mu)/(\sigma\sqrt{n}))</span>, where <span class="tx">\Phi</span> is the standard normal CDF. By the Central Limit Theorem, it goes to 0 as <span class="tx">n</span> grows.</span></span></div>
       <label class="slider d-nslider"><input type="range" id="d-n" min="0" max="1000" step="1" aria-label="Number of components in the last row"><output id="d-n-v"></output></label>
@@ -823,10 +827,17 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   function niceStep(raw) { const m = Math.pow(10, Math.floor(Math.log10(raw))), n = raw / m; return (n < 1.5 ? 1 : n < 3 ? 2 : n < 7 ? 5 : 10) * m; }
   function onDrag(el, h) {
     const pos = (e) => { const r = el.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
-    el.addEventListener("pointerdown", (e) => { if (h.down(pos(e), e) === false) return; el._dragging = true; try { el.setPointerCapture(e.pointerId); } catch (_) {} el.classList.add("grabbing"); e.preventDefault(); });
-    el.addEventListener("pointermove", (e) => { if (el._dragging) h.move(pos(e), e); else if (h.hover) h.hover(pos(e), e); });
-    const end = (e) => { if (!el._dragging) return; el._dragging = false; el.classList.remove("grabbing"); if (h.up) h.up(pos(e), e); };
-    el.addEventListener("pointerup", end); el.addEventListener("pointercancel", end);
+    el.addEventListener("pointerdown", (e) => { if (h.down(pos(e), e) === false) return; el._dragging = true; el._pid = e.pointerId; el._x0 = e.clientX; el._y0 = e.clientY; el._eng = !(h.sideways && e.pointerType === "touch"); try { el.setPointerCapture(e.pointerId); } catch (_) {} el.classList.add("grabbing"); e.preventDefault(); });
+    // with h.sideways, a touch drag counts only once it moves sideways, so a swipe up or down just scrolls the page
+    el.addEventListener("pointermove", (e) => {
+      if (!el._dragging) { if (h.hover) h.hover(pos(e), e); return; }
+      if (!el._eng) { const dx = e.clientX - el._x0, dy = e.clientY - el._y0; if (Math.abs(dx) < 6 || Math.abs(dx) <= Math.abs(dy)) return; el._eng = true; }
+      h.move(pos(e), e);
+    });
+    // the drag ends however the pointer goes away, so nothing is left waiting for a release that never reaches the canvas
+    const end = (e) => { if (!el._dragging || e.pointerId !== el._pid) return; el._dragging = false; el.classList.remove("grabbing"); if (h.up) h.up(pos(e), e); };
+    ["pointerup", "pointercancel", "lostpointercapture"].forEach((t) => el.addEventListener(t, end));
+    window.addEventListener("pointerup", end, true); window.addEventListener("pointercancel", end, true);
     if (h.leave) el.addEventListener("pointerleave", (e) => { if (!el._dragging) h.leave(e); });
   }
   function tween(st, target, ms, frame) {
@@ -840,7 +851,8 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   function setSeg(name, value) { const el = document.querySelector('input[name="' + name + '"][value="' + value + '"]'); if (el) el.checked = true; }
   const visible = new Set();
   const io = window.IntersectionObserver ? new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) visible.add(e.target.id); else visible.delete(e.target.id); }), { rootMargin: "80px" }) : null;
-  ["cv-3d", "cv-mid", "cv-rs3d"].forEach((id) => { if (io) io.observe($(id)); else visible.add(id); });
+  const SPIN = ["cv-3d", "cv-mid", "cv-rs3d"];
+  SPIN.forEach((id) => { if (io) io.observe($(id)); else visible.add(id); });
 
   // =====================================================================
   // II. Height isn't probability
@@ -1669,6 +1681,7 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   }
   if (window.IntersectionObserver) new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting && !V.rsSeen && V.mode === "slice") { V.rsSeen = true; vRescale(250); } }), { threshold: 0.6 }).observe($("cv-v1"));
   onDrag($("cv-3d"), {
+    sideways: true,
     down: (p) => { V.last = p; },
     move: (p) => { V.idle = false; V.az -= (p.x - V.last.x) * 0.01; V.el = clamp(V.el + (p.y - V.last.y) * 0.006, 0.12, 1.25); V.last = p; vDraw(); },
     up: () => {}
@@ -2020,6 +2033,7 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
     setSeg("rs-view", RS.view); $("rs-circ").hidden = RS.view !== "bump"; $("rs-skel").hidden = RS.view !== "walls";   // circles are for comparing the joint density's contours
   }
   onDrag($("cv-rs3d"), {
+    sideways: true,
     down: (pt) => { RS.last = pt; },
     move: (pt) => { RS.idle = false; RS.az -= (pt.x - RS.last.x) * 0.01; RS.el = clamp(RS.el + (pt.y - RS.last.y) * 0.006, 0.12, 1.3); RS.last = pt; rs3dDraw(); },
     up: () => {}
@@ -2326,14 +2340,15 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   $("d-n").addEventListener("input", () => { const n = nOf(+$("d-n").value); $("d-n-v").textContent = n; if (n === D.nb) return; D.nb = n; if (D.years && n !== 365) yearsSet(false); dComputeBig(); dDraw(); });
   // actual annual rainfall against the prediction: the comparison is for a year of days, so it sets the last row to 365 and lets go when n moves
   function yearsSet(on) {
-    D.years = on; $("d-years").setAttribute("aria-pressed", String(on));
+    D.years = on; $("d-years").setAttribute("aria-pressed", String(on)); $("d-cmp").hidden = !on;
     if (on && D.nb !== 365) { D.nb = 365; dComputeBig(); $("d-n").value = tOf(365); $("d-n-v").textContent = 365; }
   }
   { const w = DPRE.rain.w, t = w.reduce((a, b) => a + b, 0), m = w.reduce((a, c, i) => a + c * i, 0) / t, v = w.reduce((a, c, i) => a + c * (i - m) * (i - m), 0) / t;
     const xs = RAINY.inches, N = xs.length, am = xs.reduce((a, b) => a + b, 0) / N, asd = Math.sqrt(xs.reduce((a, b) => a + (b - am) * (b - am), 0) / (N - 1));
-    $("tip-days").textContent = "Actual annual rainfall for the " + N + " years from " + RAINY.from + " to " + RAINY.to + " has a mean of " + am.toFixed(1) + " in and a standard deviation of " + asd.toFixed(1) + " in. "
-      + "The sum of 365 independent draws has a mean of " + (3.65 * m).toFixed(1) + " in and a standard deviation of " + (Math.sqrt(365 * v) / 100).toFixed(1) + " in. "
-      + "The means agree because the mean of a sum does not depend on independence. The standard deviations differ because the variance of a sum does, and rainy days come in streaks. The shapes differ too, partly because there are only " + N + " years of annual rainfall."; }
+    // the means are not compared: both come from the same days, so they agree by arithmetic
+    $("d-cmp").textContent = "Actual annual rainfall for the " + N + " years from " + RAINY.from + " to " + RAINY.to + " has a standard deviation of " + asd.toFixed(1) + " in. "
+      + "The sum of 365 independent draws has a standard deviation of " + (Math.sqrt(365 * v) / 100).toFixed(1) + " in. "
+      + "Unlike the mean, the variance of a sum depends on independence, and rainy days come in streaks. The shapes differ too, partly because only " + N + " years of annual rainfall data are available."; }
   $("d-years").addEventListener("click", () => { yearsSet(!D.years); dDraw(); });
 
   // =====================================================================
@@ -2654,7 +2669,7 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   }
   function midCap() {
     const coin = MID.kind === "coin", names = { 1: "one", 2: "two", 3: "three", 4: "four", 8: "eight" }, what = names[MID.n] + " " + (coin ? (MID.n === 1 ? "coin" : "coins") : MID.n === 1 ? "die" : "dice");
-    $("mid-cap").innerHTML = "Each bead is one outcome of the " + (coin ? "coins" : "dice") + ", strung on the wire for its " + (coin ? "number of heads" : "sum") + ". As " + (coin ? "coins" : "dice") + " are added, the standardized sum converges to the normal. <a href=\"#s-clt\">See VII</a>.";
+    $("mid-cap").innerHTML = "Each bead is one outcome of the " + (coin ? "coins" : "dice") + ", organized by " + (coin ? "number of heads" : "sum") + ". As " + (coin ? "coins" : "dice") + " are added, the standardized " + (coin ? "number of heads" : "sum") + " converges to the normal. <a href=\"#s-clt\">See VII</a>.";
     $("cv-mid").setAttribute("aria-label", "Every way " + what + " can land, drawn as beads on vertical wires, one wire per sum, turning slowly. The middle wires hold the most beads. Below, each wire's share of the beads, under the normal curve.");
   }
   // how many dice or coins: its own choices for each
@@ -2665,6 +2680,7 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   {
     const cvs = $("cv-mid"), wireAt = (p) => { const g = MID.geo, c = MID.c; if (!g || !c) return -1; const s = Math.round((p.x - g.cx) * g.sc / g.k + c.n * c.mu - c.smin); return s >= 0 && s < c.nW && Math.abs(g.cx + g.k * (s + c.smin - c.n * c.mu) / g.sc - p.x) <= Math.max(g.sp / 2, 8) && p.y < g.top + g.Hc + 120 ? s : -1; };
     onDrag(cvs, {
+      sideways: true,
       down: (p) => { MID.last = p; MID.hov = wireAt(p); midDraw(); },
       move: (p) => { if (p.x !== MID.last.x) { MID.idle = false; MID.heldAt = performance.now(); } MID.t += (p.x - MID.last.x) * 0.012; MID.last = p; midDraw(); },
       up: () => { MID.heldAt = performance.now(); },
@@ -2786,7 +2802,18 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   // a hover note also opens on a tap, for touch screens; another tap, a tap on the note, a tap elsewhere or Escape closes it
   {
     const notes = () => document.querySelectorAll(".term.open, .d-head.open"), shut = () => notes().forEach((o) => { o.classList.remove("open"); o.blur(); });
-    document.querySelectorAll(".term, .d-head").forEach((el) => el.addEventListener("click", (e) => { if (e.target.closest(".tip")) { shut(); return; } const on = !el.classList.contains("open"); shut(); if (on) el.classList.add("open"); }));
+    // a note opens just under the end of its phrase, kept inside the paragraph, with its caret on the phrase
+    const placeTip = (term) => {
+      const tip = term.querySelector(".tip"), host = term.closest(".has-term"); if (!tip || !host) return;
+      const hr = host.getBoundingClientRect(), rs = term.getClientRects(), last = rs[rs.length - 1]; if (!last) return;
+      tip.style.left = "0px"; tip.style.visibility = "hidden"; tip.style.display = "block"; const tw = tip.offsetWidth; tip.style.display = ""; tip.style.visibility = "";
+      const a = last.left - hr.left, x = Math.max(0, Math.min(a, hr.width - tw));
+      tip.style.left = x + "px"; tip.style.top = (last.bottom - hr.top + 9) + "px";
+      tip.style.setProperty("--cx", clamp(a + Math.min(last.width, 64) / 2 - x, 14, tw - 14) + "px");
+    };
+    document.querySelectorAll(".term").forEach((el) => { el.addEventListener("mouseenter", () => placeTip(el)); el.addEventListener("focus", () => placeTip(el)); });
+    window.addEventListener("resize", () => document.querySelectorAll(".term.open").forEach(placeTip));
+    document.querySelectorAll(".term, .d-head").forEach((el) => el.addEventListener("click", (e) => { if (e.target.closest(".tip")) { shut(); return; } const on = !el.classList.contains("open"); shut(); if (on) { if (el.classList.contains("term")) placeTip(el); el.classList.add("open"); } }));
     document.addEventListener("click", (e) => { if (!e.target.closest(".term, .d-head")) shut(); });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") shut(); });
   }
@@ -2794,7 +2821,7 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   // =====================================================================
   // loop, resize, theme
   // =====================================================================
-  let lastT = performance.now();
+  let lastT = performance.now(), visAt = 0;
   function loop(now) {
     const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now;
     let d3 = false, side = false;
@@ -2808,8 +2835,11 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
     if (visible.has("cv-3d") && V.idle && !RM && V.mode !== "dozer" && V.mode !== "walls") { V.az += dt * 0.1; if (now - V.spunAt > 30) d3 = true; }
     if (d3) { V.spunAt = now; vDraw3d(); }
     if (visible.has("cv-rs3d") && RS.idle && !RM) { RS.az += dt * 0.1; if (now - RS.spunAt > 33) rs3dDraw(); }
-    if (!MID.idle && !RM && MID.heldAt && now - MID.heldAt > 4000 && !$("cv-mid")._dragging) MID.idle = true;
-    if (visible.has("cv-mid") && MID.idle && !RM) { MID.t += dt * 0.3; if (now - MID.drawnAt > 30) midDraw(); }
+    // the hero turns again 4 s after it was let go; the timers use performance.now(), the clock they were set by
+    const pnow = performance.now();
+    if (pnow - visAt > 300) { visAt = pnow; SPIN.forEach((id) => { const r = $(id).getBoundingClientRect(); if (r.width && r.bottom > -80 && r.top < window.innerHeight + 80) visible.add(id); else visible.delete(id); }); }
+    if (!MID.idle && !RM && MID.heldAt && pnow - MID.heldAt > 4000 && !$("cv-mid")._dragging) MID.idle = true;
+    if (visible.has("cv-mid") && MID.idle && !RM) { MID.t += dt * 0.3; if (pnow - MID.drawnAt > 30) midDraw(); }
     if (side) vDrawSide();
     requestAnimationFrame(loop);
   }
