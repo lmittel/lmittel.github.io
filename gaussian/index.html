@@ -20,6 +20,7 @@
 <meta property="og:image:alt" content="The title The Gaussian, taken apart, and the standard normal density formula, beside beads showing every way three dice can land and the bell curve they form">
 <meta name="twitter:card" content="summary_large_image">
 <script data-goatcounter="https://louismittel.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>try { if (localStorage.getItem("gauss-theme") === "dark") document.documentElement.dataset.theme = "dark"; } catch (e) {}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Atkinson+Hyperlegible+Next:wght@400;600;800&family=Atkinson+Hyperlegible+Mono:wght@400;600&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap">
@@ -51,16 +52,6 @@
   --font-math: "STIX Two Text", "Cambria Math", "Times New Roman", serif;
   color-scheme: light;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #111015; --surface: #19181e; --ink: #f2ede3; --ink-2: #c5beb1; --muted: #8f897e;
-    --grid: #2a2830; --axis: #4d4954; --line: rgba(255, 255, 255, 0.10); --hover: rgba(255, 255, 255, 0.07);
-    --b0: #f3b64e; --b1: #f07f55; --b2: #d65f99; --b3: #8b7ef0;
-    --female: #5ea4f2; --male: #3cc6a1; --prob: #6aa8f5; --on-ink: #141317;
-    --shadow: 0 22px 44px -30px rgba(0, 0, 0, 0.8);
-    color-scheme: dark;
-  }
-}
 :root[data-theme="dark"] {
   --paper: #111015; --surface: #19181e; --ink: #f2ede3; --ink-2: #c5beb1; --muted: #8f897e;
   --grid: #2a2830; --axis: #4d4954; --line: rgba(255, 255, 255, 0.10); --hover: rgba(255, 255, 255, 0.07);
@@ -80,6 +71,8 @@ a { color: inherit; }
 :focus-visible { outline: 2px solid var(--b1); outline-offset: 2px; }
 
 /* ---------- hero ---------- */
+.topbar { display: flex; justify-content: flex-end; margin: 0 0 6px; }
+.theme-tog { font-size: 13px; padding: 4px 12px; }
 .hero { display: grid; gap: 22px; padding-bottom: 8px; }
 .hero-text { display: grid; gap: 14px; align-content: start; min-width: 0; }
 .hero-fig { margin: 0; min-width: 0; }
@@ -434,6 +427,7 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
 </head>
 <body>
 <div class="page">
+  <div class="topbar"><button class="tog theme-tog" type="button" id="theme-tog" aria-pressed="false">Dark mode</button></div>
   <header class="hero">
     <div class="hero-text">
     <h1>The <em>Gaussian</em>, taken apart</h1>
@@ -1661,8 +1655,8 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   }
   if (window.IntersectionObserver) new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting && !V.rsSeen && V.mode === "slice") { V.rsSeen = true; vRescale(250); } }), { threshold: 0.6 }).observe($("cv-v1"));
   onDrag($("cv-3d"), {
-    down: (p) => { V.idle = false; V.last = p; },
-    move: (p) => { V.az -= (p.x - V.last.x) * 0.01; V.el = clamp(V.el + (p.y - V.last.y) * 0.006, 0.12, 1.25); V.last = p; vDraw(); },
+    down: (p) => { V.last = p; },
+    move: (p) => { V.idle = false; V.az -= (p.x - V.last.x) * 0.01; V.el = clamp(V.el + (p.y - V.last.y) * 0.006, 0.12, 1.25); V.last = p; vDraw(); },
     up: () => {}
   });
   document.querySelectorAll('input[name="v-mode"]').forEach((el) => el.addEventListener("change", () => { V.mode = el.value; if (V.mode !== "ring") { V.canOn = false; V.can = 0; if (V.sweep) V.r = V.sweep.target; V.sweep = null; V.shellA = 0; } vDraw(); if (V.mode === "slice") vRescale(200); }));
@@ -2012,8 +2006,8 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
     setSeg("rs-view", RS.view); $("rs-circ").hidden = RS.view !== "bump"; $("rs-skel").hidden = RS.view !== "walls";   // circles are for comparing the joint density's contours
   }
   onDrag($("cv-rs3d"), {
-    down: (pt) => { RS.idle = false; RS.last = pt; },
-    move: (pt) => { RS.az -= (pt.x - RS.last.x) * 0.01; RS.el = clamp(RS.el + (pt.y - RS.last.y) * 0.006, 0.12, 1.3); RS.last = pt; rs3dDraw(); },
+    down: (pt) => { RS.last = pt; },
+    move: (pt) => { RS.idle = false; RS.az -= (pt.x - RS.last.x) * 0.01; RS.el = clamp(RS.el + (pt.y - RS.last.y) * 0.006, 0.12, 1.3); RS.last = pt; rs3dDraw(); },
     up: () => {}
   });
   onDrag($("cv-map"), {
@@ -2634,8 +2628,9 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   {
     const cvs = $("cv-mid"), wireAt = (p) => { const g = MID.geo, c = MID.c; if (!g || !c) return -1; const s = Math.round((p.x - g.cx) * g.sc / g.k + c.n * c.mu - c.smin); return s >= 0 && s < c.nW && Math.abs(g.cx + g.k * (s + c.smin - c.n * c.mu) / g.sc - p.x) <= Math.max(g.sp / 2, 8) && p.y < g.top + g.Hc + 120 ? s : -1; };
     onDrag(cvs, {
-      down: (p) => { MID.idle = false; MID.last = p; MID.hov = wireAt(p); midDraw(); },
-      move: (p) => { MID.t += (p.x - MID.last.x) * 0.012; MID.last = p; midDraw(); },
+      down: (p) => { MID.last = p; MID.hov = wireAt(p); midDraw(); },
+      move: (p) => { if (p.x !== MID.last.x) { MID.idle = false; MID.heldAt = performance.now(); } MID.t += (p.x - MID.last.x) * 0.012; MID.last = p; midDraw(); },
+      up: () => { MID.heldAt = performance.now(); },
       hover: (p) => { const s = wireAt(p), g = MID.geo, z = g ? (p.x - g.cx) / g.k : 0, onC = !!g && p.y > g.top + g.Hc && Math.abs(p.y - (g.yB - g.hpx(Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI)))) < 7;
         if (onC !== !!MID.phiCv) { MID.phiCv = onC; phiLight(onC); } if (s !== MID.hov) { MID.hov = s; midDraw(); } },
       leave: () => { if (MID.phiCv) { MID.phiCv = false; phiLight(false); } if (MID.hov >= 0) { MID.hov = -1; midDraw(); } },
@@ -2770,6 +2765,7 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
     if (visible.has("cv-3d") && V.idle && !RM && V.mode !== "dozer" && V.mode !== "walls") { V.az += dt * 0.1; if (now - V.spunAt > 30) d3 = true; }
     if (d3) { V.spunAt = now; vDraw3d(); }
     if (visible.has("cv-rs3d") && RS.idle && !RM) { RS.az += dt * 0.1; if (now - RS.spunAt > 33) rs3dDraw(); }
+    if (!MID.idle && !RM && MID.heldAt && now - MID.heldAt > 4000 && !$("cv-mid")._dragging) MID.idle = true;
     if (visible.has("cv-mid") && MID.idle && !RM) { MID.t += dt * 0.3; if (now - MID.drawnAt > 30) midDraw(); }
     if (side) vDrawSide();
     requestAnimationFrame(loop);
@@ -2778,7 +2774,10 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   let lastW = 0;
   const ro = window.ResizeObserver ? new ResizeObserver(() => { const w = document.body.clientWidth; if (w !== lastW) { lastW = w; requestAnimationFrame(renderAll); } }) : null;
   if (ro) ro.observe(document.body); else window.addEventListener("resize", renderAll);
-  try { window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", renderAll); } catch (e) {}
+  { const tg = $("theme-tog"), sync = () => tg.setAttribute("aria-pressed", String(document.documentElement.dataset.theme === "dark"));
+    sync();
+    tg.addEventListener("click", () => { const dark = document.documentElement.dataset.theme !== "dark"; if (dark) document.documentElement.dataset.theme = "dark"; else delete document.documentElement.dataset.theme;
+      try { localStorage.setItem("gauss-theme", dark ? "dark" : "light"); } catch (e) {} sync(); renderAll(); }); }
   new MutationObserver(renderAll).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(renderAll);
   renderAll();
