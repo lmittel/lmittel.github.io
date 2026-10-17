@@ -1931,9 +1931,10 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
       ctx.fillStyle = tint(heightCol((q.a.z + q.c.z) / 2), sh); ctx.fill();
       if (q.i % 3 === 0 || q.j % 3 === 0) { ctx.beginPath(); if (q.i % 3 === 0) { ctx.moveTo(A[0], A[1]); ctx.lineTo(Dq[0], Dq[1]); } if (q.j % 3 === 0) { ctx.moveTo(A[0], A[1]); ctx.lineTo(B[0], B[1]); } ctx.stroke(); }
     }
-    // two contours on the floor: circles when round, squares when boxy, diamonds when pointy
-    ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = C.ink; ctx.lineWidth = 1.3; ctx.beginPath();
-    ms.segs.forEach(([x1, y1, x2, y2]) => { const a = P(x1, y1, 0), b = P(x2, y2, 0); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); }); ctx.stroke(); ctx.restore();
+    // two contours on the floor of the joint density: circles when round, squares when boxy, diamonds when pointy
+    // (the product view leaves them out; its question, whether the marginals multiply to the joint, is answered by the wireframe)
+    if (RS.view === "bump") { ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = C.ink; ctx.lineWidth = 1.3; ctx.beginPath();
+      ms.segs.forEach(([x1, y1, x2, y2]) => { const a = P(x1, y1, 0), b = P(x2, y2, 0); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); }); ctx.stroke(); ctx.restore(); }
     // circles through each contour where it crosses the x-axis: on a round density they sit right on the contours
     if (RS.circ && RS.view === "bump") { ctx.strokeStyle = C.b0; ctx.lineWidth = 2; ms.rings.forEach((r) => { ctx.beginPath(); for (let i = 0; i <= 96; i++) { const t = 2 * Math.PI * i / 96, pt = P(r * Math.cos(t), r * Math.sin(t), 0); if (i) ctx.lineTo(pt[0], pt[1]); else ctx.moveTo(pt[0], pt[1]); } ctx.stroke(); }); }
     // the joint density as a wireframe over the product of the marginals: solid where it rises above the surface, dashed where it runs inside
@@ -2032,7 +2033,8 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
       text(ctx, ok ? "=" : "≠", (xs[2] + xs[3]) / 2, sy(0.1), F_DISP(26, 600), ok ? C.b2 : C.b1, "center");
       text(ctx, ok ? "checks out" : "fails", (xs[2] + xs[3]) / 2, sy(0.1) - 26, F_LAB, ok ? C.b2 : C.b1, "center"); }
     $("rs-x0-v").textContent = fx(RS.x0, 2); $("rs-y0-v").textContent = fx(RS.y0, 2);
-    setSeg("rs-view", RS.view); $("rs-circ").hidden = RS.view !== "bump"; $("rs-skel").hidden = RS.view !== "walls";   // circles are for comparing the joint density's contours
+    setSeg("rs-view", RS.view); $("rs-circ").hidden = RS.view !== "bump"; $("rs-skel").hidden = RS.view !== "walls";
+    $("cv-rs3d").setAttribute("aria-label", RS.view === "bump" ? "The chosen joint density as a surface, with its two marginal densities on the back walls and two of its contours on the floor. Drag to turn." : "The product of the two marginal densities as a surface, with the marginals on the back walls. Drag to turn.");   // circles are for comparing the joint density's contours
   }
   onDrag($("cv-rs3d"), {
     sideways: true,
