@@ -16,7 +16,7 @@
 <meta property="og:image" content="https://louismittel.com/benford/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="The title When and why data tend to start with 1, beside a ring of ticks for every US county's population, marked with leading digits 1 to 9">
+<meta property="og:image:alt" content="A close-up of the ring of tick marks, one per US county, with a red line where the digit 1 begins and a large red numeral 1, on a dark background">
 <meta name="twitter:card" content="summary_large_image">
 <script data-goatcounter="https://louismittel.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <link rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">
@@ -711,12 +711,25 @@ function showTip(el){
   tip.style.left=x+'px'; tip.style.top=y+'px';
 }
 function hideTip(){ tip.hidden=true; tipFor=null; }
-document.addEventListener('mouseover',function(e){ var t=e.target.closest&&e.target.closest('.term'); if(t) showTip(t); });
-document.addEventListener('mouseout',function(e){ var t=e.target.closest&&e.target.closest('.term'); if(t&&!t.contains(e.relatedTarget)) hideTip(); });
-document.addEventListener('focusin',function(e){ if(e.target.classList&&e.target.classList.contains('term')) showTip(e.target); });
-document.addEventListener('focusout',function(e){ if(e.target.classList&&e.target.classList.contains('term')) hideTip(); });
-document.addEventListener('click',function(e){ var t=e.target.closest&&e.target.closest('.term'); if(t){ if(tipFor===t) hideTip(); else showTip(t); } else if(tipFor) hideTip(); });
-window.addEventListener('scroll',function(){ if(tipFor) hideTip(); },{passive:true});
+/* A mouse shows a definition while it rests on the term. A tap opens it and the next tap anywhere closes it.
+   Taps are read from pointer events, not from the mouse events and click a phone makes up afterwards: on
+   iOS Safari those arrive after the tap has already opened the definition, and used to close it again at once. */
+function termAt(e){ return e.target&&e.target.closest?e.target.closest('.term'):null; }
+document.addEventListener('pointerover',function(e){ if(e.pointerType!=='mouse') return; var t=termAt(e); if(t) showTip(t); });
+document.addEventListener('pointerout',function(e){ if(e.pointerType!=='mouse') return; var t=termAt(e); if(t&&!t.contains(e.relatedTarget)&&tipFor===t) hideTip(); });
+var tap=null;
+document.addEventListener('pointerdown',function(e){ if(e.pointerType==='mouse') return; var t=termAt(e); tap={t:t,x:e.clientX,y:e.clientY,open:!!t&&tipFor===t}; },true);
+document.addEventListener('pointerup',function(e){
+  if(e.pointerType==='mouse'||!tap) return; var d=tap; tap=null;
+  if(Math.abs(e.clientX-d.x)>10||Math.abs(e.clientY-d.y)>10) return;   /* a swipe, not a tap */
+  var t=termAt(e);
+  if(t&&t===d.t){ if(d.open) hideTip(); else showTip(t); }
+  else if(tipFor) hideTip();
+},true);
+document.addEventListener('pointercancel',function(){ tap=null; },true);
+document.addEventListener('focusin',function(e){ if(e.target.classList&&e.target.classList.contains('term')&&tipFor!==e.target) showTip(e.target); });
+document.addEventListener('focusout',function(e){ if(tipFor===e.target&&!tap) hideTip(); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&tipFor) hideTip(); });
 function term(k,label){ return '<span class="term" tabindex="0" data-tip="'+k+'">'+label+'</span>'; }
 
 /* ───────────────────── the pmf chart ─────────────────────
