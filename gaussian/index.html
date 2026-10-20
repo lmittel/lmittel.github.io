@@ -518,7 +518,7 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   </section>
 
   <section class="sec" id="s5" aria-labelledby="h5-t">
-    <div class="sec-head"><div class="num" aria-hidden="true">IV</div><h2 id="h5-t">Where does π come from?</h2><p class="idea">The kernel <span class="tx">e^{-x^2/2}</span> has no closed form antiderivative, so the area <span class="tx">A</span> under it can't be found directly. The two dimensional Gaussian looks harder but is actually easier to work with, and <span class="tx">A</span> can be recovered from its volume. And π emerges because the 2D Gaussian is constructed from circles.</p></div>
+    <div class="sec-head"><div class="num" aria-hidden="true">IV</div><h2 id="h5-t">Where does π come from?</h2><p class="idea">The kernel <span class="tx">e^{-x^2/2}</span> has no closed form antiderivative, so the area <span class="tx">A</span> under it can't be found directly. The two dimensional Gaussian looks harder but is actually easier to work with, and <span class="tx">A</span> can be recovered from its volume. The π in the normalizing constant emerges because the 2D Gaussian is constructed from circles.</p></div>
     <div class="plate split5">
       <div>
         <div class="toolbar"><div class="seg" role="radiogroup" aria-label="What to do to the surface"><input type="radio" name="v-mode" id="vm-r" value="ring" checked><label for="vm-r">Unroll</label><input type="radio" name="v-mode" id="vm-s" value="slice"><label for="vm-s">Slice</label><input type="radio" name="v-mode" id="vm-b" value="dozer"><label for="vm-b">Bulldoze</label><input type="radio" name="v-mode" id="vm-m" value="walls"><label for="vm-m">Multiply</label></div><button class="tog" type="button" id="v-vol" aria-pressed="false" hidden>ε-square volume</button></div>
@@ -550,7 +550,7 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   </section>
 
   <section class="sec" id="s-draws" aria-labelledby="hd-t">
-    <div class="sec-head"><div class="num" aria-hidden="true">V</div><h2 id="hd-t">Where the draws land</h2><p class="idea">Each dot is one draw from the standard Gaussian. Below each cloud is the distribution of the distance of each draw from the center.</p></div>
+    <div class="sec-head"><div class="num" aria-hidden="true">V</div><h2 id="hd-t">Where the draws land</h2><p class="idea">Each dot is one draw from the standard Gaussian in one, two or three dimensions. Below each plot is the distribution of a draw's distance from the center.</p></div>
     <div class="plate smp-plate">
       <div class="smp-ctl"><button class="btn" id="smp-one" type="button">Draw one</button><button class="btn" id="smp-go" type="button">Draw 3,000</button><button class="btn" id="smp-again" type="button">Start again</button><span class="smp-n" id="smp-n"></span></div>
       <div class="smp-grid">
@@ -2673,7 +2673,10 @@ footer { margin-top: 90px; padding-top: 18px; border-top: 1px solid var(--line);
   }
   function midCap() {
     const coin = MID.kind === "coin", names = { 1: "one", 2: "two", 3: "three", 4: "four", 8: "eight" }, what = names[MID.n] + " " + (coin ? (MID.n === 1 ? "coin" : "coins") : MID.n === 1 ? "die" : "dice");
-    $("mid-cap").innerHTML = "Each bead is one outcome of the " + (coin ? "coins" : "dice") + ", organized by " + (coin ? "number of heads" : "sum") + ". As " + (coin ? "coins" : "dice") + " are added, the standardized " + (coin ? "number of heads" : "sum") + " converges to the normal. <a href=\"#s-clt\">See VII</a>.";
+    // every outcome of fair dice or coins is equally likely, so a sum's probability counts the ways to make it; with one die or coin every sum has one way
+    const one = MID.n === 1, ways = one ? "" : " Every outcome is equally likely, but " + (coin ? "a middle number of heads can happen more ways." : "a middle sum can be rolled more ways.");
+    $("mid-cap").innerHTML = "Each bead is one outcome of the " + (coin ? (one ? "coin" : "coins") : one ? "die" : "dice") + ", organized by " + (coin ? "number of heads" : "sum") + "." + ways
+      + " As " + (coin ? "coins" : "dice") + " are added, the standardized " + (coin ? "number of heads" : "sum") + " converges to the standard normal, the shape of counting seen from far away. <a href=\"#s-clt\">See VII</a>.";
     $("cv-mid").setAttribute("aria-label", "Every way " + what + " can land, drawn as beads on vertical wires, one wire per sum, turning slowly. The middle wires hold the most beads. Below, each wire's share of the beads, under the normal curve.");
   }
   // how many dice or coins: its own choices for each
