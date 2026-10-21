@@ -49,6 +49,8 @@ h2{font-weight:800;font-size:clamp(30px,4.6vw,52px);line-height:.95;letter-spaci
 .dnote{margin:18px 0 0;font-size:14.5px;line-height:1.45;color:var(--ink2);max-width:44em}
 @media (prefers-reduced-motion:reduce){.tog .trk,.tog .trk::after{transition:none}}
 .stepname{display:none}
+.steps button.done i{color:transparent;background:var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.6 6.4l2.2 2.1 4.6-5' fill='none' stroke='%23f3f7f5' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat}
+.steps button.done{border-color:var(--ink2)}
 @media (min-width:601px) and (max-width:1180px){.steps{flex-wrap:wrap;overflow:visible}}
 .seqwrap{position:relative;margin:30px 0 0}
 #cv-seq{cursor:crosshair}
@@ -356,6 +358,8 @@ const RD = (() => {
     rows.map((r) => "<span>" + r[0] + "</span><span>" + sgn(r[1]) + "</span><span>" + fmtN(r[2]) + "</span>").join("") + "</span></span>";
   return { say: W[k], note };
 })();
+// fuller names for the heading shown on a phone, where there is room for them
+const LONG = ["Daily births", "Align weekdays", "Remove day of week effect", "Remove seasonal effect", "Remove long term trend", "Remove day of year effect"];
 const STEPS = [
   ["Daily births", (E) => "Before any modeling, daily births vary by approximately ±" + SD0 + "% around the " + PERIOD + " average."],
   ["Align weekdays", (E) => "Rows are shifted so that weekdays align. Saturdays and Sundays appear as blue columns."],
@@ -365,7 +369,7 @@ const STEPS = [
   ["Remove day of year", (E) => "After removal of the effects of specific dates, the residual variation is approximately " + sgn(pc(E.sdEps), 1).replace("+", "±") + " per day, and what remains looks more like noise. " + RD.say + ' of the 12 largest remaining deviations fall on <span class="term rd" tabindex="0" aria-describedby="rdnote">dates with repeated digits</span>, such as 11/11/11 and 6/6/06.' + RD.note],
 ];
 const H = { step: 0, p: 0, s: 0, cur: null, anim: 0, geo: null };
-$("steps").innerHTML = STEPS.map((s, k) => (k === 2 ? '<span class="sdiv" aria-hidden="true"></span>' : "") + '<button type="button" data-k="' + k + '" aria-label="Step ' + (k + 1) + ', ' + s[0] + '"><i>' + (k + 1) + '</i><span class="sl">' + s[0] + "</span></button>").join("");
+$("steps").innerHTML = STEPS.map((s, k) => (k === 2 ? '<span class="sdiv" aria-hidden="true"></span>' : "") + '<button type="button" data-k="' + k + '" aria-label="Step ' + (k + 1) + ', ' + LONG[k] + '"><i>' + (k + 1) + '</i><span class="sl">' + s[0] + "</span></button>").join("");
 
 function fabSize() {
   const cv = $("cv-fab"), W = Math.max(280, cv.parentElement.clientWidth - (window.innerWidth < 520 ? 12 : 24)), nY = P.nY, narrow = W < 560;
@@ -397,8 +401,9 @@ function drawFab() {
 function setStep(k, instant) {
   const from = H.cur ? H.cur.slice() : P.steps[k], to = P.steps[k], s0 = H.s || P.scales[k], s1 = P.scales[k], p0 = H.p, p1 = k === 1 ? 1 : 0;
   H.step = k; cancelAnimationFrame(H.anim);
-  document.querySelectorAll("#steps button").forEach((b) => b.setAttribute("aria-pressed", String(+b.dataset.k === k)));
-  $("fab-say").innerHTML = STEPS[k][1](P.E); $("fab-say").classList.remove("open"); $("step-name").textContent = STEPS[k][0];
+  // removal steps already passed keep a check mark, since what they removed stays removed
+  document.querySelectorAll("#steps button").forEach((b) => { const j = +b.dataset.k; b.setAttribute("aria-pressed", String(j === k)); b.classList.toggle("done", j >= 2 && j < k); });
+  $("fab-say").innerHTML = STEPS[k][1](P.E); $("fab-say").classList.remove("open"); $("step-name").textContent = LONG[k];
   const ex = [0, 0, 1, 2, 3, 4][k], e = P.E.explained[ex] * 100;
   $("fab-bar").style.width = e.toFixed(1) + "%"; $("fab-pct").textContent = (e < 0.05 ? "0" : e.toFixed(e < 10 ? 1 : 0)) + "%";
   $("leg-t").textContent = k < 2 ? "Births vs the " + PERIOD + " average" : "Remaining variation";
@@ -568,7 +573,7 @@ function drawCal() {
   s += narrow ? T(x(185) - 4, y(at(185)) + 16, "start", "July 4") : T(x(185) + 7, y(at(185)) + 4, "start", "July 4");
   const names = narrow ? ["M", "L", "T"] : ["Memorial Day", "Labor Day", "Thanksgiving"];   // a phone has room for initials, spelled out in the key
   [0, 1, 2].forEach((i) => { const [k, p, , r] = fl[i]; s += T(x(k), y(p) + r + 13, "middle", names[i]); });
-  if (!narrow) s += T(x(44), y(at(44)) - 7, "middle", "Valentine's") + T(x(59) - 8, y(at(59)) + 4, "end", "Leap Day") + T(x(91), y(at(91)) + 16, "middle", "April Fools'");
+  if (!narrow) s += T(x(44), y(at(44)) - 7, "middle", "Valentine's") + T(x(91), y(at(91)) + 16, "middle", "April Fools'");
   // the dates at the end of December are labeled in the right margin, each at its own height
   const M = [[362, "Dec 28"], [358, "Christmas Eve"], [359, "Christmas"]].filter((m) => !narrow || m[0] !== 358).map(([k, nm]) => ({ k, nm, y0: y(at(k)), y: y(at(k)) })).sort((a, b) => a.y - b.y);
   for (let i = 1; i < M.length; i++) if (M[i].y - M[i - 1].y < 14) M[i].y = M[i - 1].y + 14;
