@@ -357,9 +357,9 @@ function yearCol(r, nY) { // light teal to ink, one color per year
 }
 
 // ---------- the fabric: every day as a cell, one row per year; the steps peel the pieces off ----------
-// dates like 11/11/11, with each one's deviation from the model and its rank among all days by size
+// dates like 11/11/11, with each one's deviation from the model and its rank among all days by size, ranked in percent as shown
 const RD = (() => {
-  const e = P.steps[5], n = P.n, ord = Array.from({ length: n }, (_, i) => i).sort((a, b) => Math.abs(e[b]) - Math.abs(e[a])), rank = new Int32Array(n);
+  const e = P.steps[5], n = P.n, dev = (i) => Math.abs(Math.exp(e[i]) - 1), ord = Array.from({ length: n }, (_, i) => i).sort((a, b) => dev(b) - dev(a)), rank = new Int32Array(n);
   ord.forEach((i, r) => { rank[i] = r + 1; });
   const rows = [];
   for (let i = 0; i < n; i++) { const yy = P.E.years[P.yi[i]] % 100, m = P.mon[i] + 1; if (yy >= 1 && yy <= 12 && m === yy && P.dom[i] === yy) rows.push([m + "/" + yy + "/" + String(yy).padStart(2, "0"), pc(e[i]), rank[i]]); }
