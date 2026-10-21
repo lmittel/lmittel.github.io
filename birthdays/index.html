@@ -265,7 +265,7 @@ footer{margin:56px 0 40px;padding-top:16px;border-top:1px solid var(--rule);font
 </section>
 
 <section>
-  <h2>How many births were moved off 6/6/06?</h2>
+  <h2>Worked example</h2>
   <p class="sub" id="six-sub"></p>
   <div class="six">
     <div class="card"><h3>The week of June 6, 2006</h3><p>Births above or below the model on each day.</p><div id="g-six"></div></div>
@@ -769,15 +769,15 @@ function sixText() {
   const S = DATA.e00.sixsix; if (!S) return;
   const pct = Math.abs(S.week[3][2]).toFixed(1), short = S.expected - S.actual, sdB = Math.round(S.expected * DATA.e00.sdEps), r100 = (v) => fmtN(Math.round(v / 100) * 100), r10 = (v) => fmtN(Math.round(v / 10) * 10);
   const near = S.week.filter((w, k) => k !== 3).reduce((a, w) => a + w[3], 0), sched = Math.round(S.sched * 100) / 100, sch = sched * S.expected;
-  $("six-sub").textContent = "On Tuesday, June 6, 2006, there were " + pct + "% fewer births than the model expected. What can we back out using statistical reasoning?";
+  $("six-sub").textContent = "On Tuesday, June 6, 2006, there were " + pct + "% fewer births than the model expected. What can we back out from that? How many births were rescheduled?";
   const sp = Math.round(sched * 100);
   $("six-steps").innerHTML = [
     ["The expected count.", "The model expected " + fmtN(S.expected) + " births that day. There were " + fmtN(S.actual) + ', <span class="sx" tabindex="0" aria-describedby="sxnote1">a shortfall of about ' + r10(short) + '</span>.<span class="sxnote" id="sxnote1" role="tooltip">The low count also pulled the model\'s expectation down a little. Refitting without this day gives a shortfall of about ' + r10(S.expectedLoo - S.actual) + '.</span>', "tipwrap"],
     ["Compare with chance.", "An ordinary day usually differs from the model by about ±" + sdB + " births (1 SD). The 6/6/06 shortfall is more than " + Math.floor(short / sdB) + " times that (" + r10(short) + " ÷ " + sdB + " ≈ " + (short / sdB).toFixed(1) + ")."],
     ["Where did the births go?", "Babies have to be born one day or another. The six surrounding days ran about " + r100(near) + " births above the model, mostly on Monday the 5th and Thursday the 8th."],
-    ["A share of whom?", "Only scheduled births can be moved, but the data do not count them separately. So we have to do our best: Hospitals schedule few inductions and C-sections on Sundays, and a typical Sunday has " + sp + "% fewer births than a typical Tuesday. If Sunday births are almost all unscheduled, and unscheduled births are spread evenly across the week, roughly " + r100(sch) + " births would have been scheduled that day (" + sched.toFixed(2) + " × " + fmtN(S.expected) + ")."],
+    ["A share of whom?", "Only scheduled births can be moved, but the data do not count them separately. So we have to do our best: Hospitals schedule few inductions and C-sections on Sundays, and a typical Sunday has " + sp + "% fewer births than a typical Tuesday. If Sunday births are almost all unscheduled, and unscheduled births are spread evenly across the week, we would expect roughly " + r100(sch) + " births to have been scheduled that day (" + sched.toFixed(2) + " × " + fmtN(S.expected) + ")."],
   ].map(([h, t, c]) => "<li" + (c ? ' class="' + c + '"' : "") + "><b>" + h + "</b> " + t + "</li>").join("");
-  $("six-end").innerHTML = 'We can estimate that <span class="sx" tabindex="0" aria-describedby="sxnote">about ' + r100(short) + " births were moved</span> off June 6, 2006, representing about a third of the estimated " + r100(sch) + " that would have been scheduled that day." +
+  $("six-end").innerHTML = 'We can estimate that <span class="sx" tabindex="0" aria-describedby="sxnote">about ' + r100(short) + " births were moved</span> off 6/6/06, about a third of the estimated " + r100(sch) + " scheduled deliveries that would otherwise have occurred that day." +
     '<span class="sxnote" id="sxnote" role="tooltip">This is a net estimate. If some births were moved onto the date, more than this were moved away.</span>';
   const unsch = S.expected - sch, still = S.actual - unsch;   // the scheduled births that still took place
   const nw = (s) => '<span class="nw">' + s + "</span>";
