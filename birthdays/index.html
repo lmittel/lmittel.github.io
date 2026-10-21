@@ -52,8 +52,19 @@ h2{font-weight:800;font-size:clamp(30px,4.6vw,52px);line-height:.95;letter-spaci
 .steps button.done i{color:transparent;background:var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.6 6.4l2.2 2.1 4.6-5' fill='none' stroke='%23f3f7f5' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat}
 .steps button.done{border-color:var(--ink2)}
 @media (min-width:601px) and (max-width:1180px){.steps{flex-wrap:wrap;overflow:visible}}
-.seqwrap{position:relative;margin:30px 0 0}
-#cv-seq{cursor:crosshair}
+.seqwrap{position:relative;margin:30px 0 0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+#cv-seq{cursor:crosshair;touch-action:pan-y}
+.xr{position:relative;height:30px;margin-top:2px}
+.xrt{position:absolute;left:11px;right:11px;top:12px;height:6px;border-radius:6px;background:var(--rule)}
+.xrt i{position:absolute;top:0;bottom:0;border-radius:6px;background:var(--ink)}
+.xr input{position:absolute;left:0;top:0;width:100%;height:30px;margin:0;background:transparent;-webkit-appearance:none;appearance:none;pointer-events:none;touch-action:none}
+.xr input::-webkit-slider-runnable-track{height:30px;background:transparent}
+.xr input::-moz-range-track{background:transparent}
+.xr input::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;pointer-events:auto;width:22px;height:22px;margin-top:4px;border-radius:50%;background:var(--panel);border:2px solid var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:grab}
+.xr input::-moz-range-thumb{pointer-events:auto;width:18px;height:18px;border-radius:50%;background:var(--panel);border:2px solid var(--ink);cursor:grab}
+.xr input:focus-visible{outline:none}
+.xr input:focus-visible::-webkit-slider-thumb{outline:2px solid var(--pink);outline-offset:2px}
+.xrl{display:flex;justify-content:space-between;font-size:13px;color:var(--ink2);min-height:18px}
 /* on a phone the steps become a row of numbered buttons, with the current step named underneath */
 @media (max-width:600px){
   .steps{overflow:visible;gap:6px;margin:24px 0 8px}
@@ -171,7 +182,7 @@ footer{margin:56px 0 40px;padding-top:16px;border-top:1px solid var(--rule);font
 <header>
   <h1>When are<br>we born?</h1>
   <p class="lede">All <span id="lede-n">62,187,024</span> births in the United States from 2000 to 2014.</p>
-  <div class="seqwrap"><canvas id="cv-seq" role="img" aria-label="Births per day from 2000 to 2014, one point per day"></canvas><div class="tip" id="stip" hidden></div></div>
+  <div class="seqwrap"><canvas id="cv-seq" role="img" aria-label="Births per day from 2000 to 2014, one point per day"></canvas><div class="tip" id="stip" hidden></div><div class="xr" id="xr"><span class="xrt"><i id="xr-fill"></i></span><input type="range" id="xr-a" min="0" max="5478" step="1" value="0" aria-label="First day shown"><input type="range" id="xr-b" min="0" max="5478" step="1" value="5478" aria-label="Last day shown"></div><div class="xrl" id="xrl"><span id="xr-la"></span><span id="xr-lb"></span></div></div>
 </header>
 
 <section aria-label="Every day, one row per year">
@@ -449,35 +460,64 @@ function fabTip(e) {
   f.addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse" && e.target.closest(".rd")) f.classList.toggle("open"); });
   document.addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse" && !(e.target.closest && e.target.closest(".rd"))) f.classList.remove("open"); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") f.classList.remove("open"); }); }
-// the opening plot, births against day with one point per day
+// the opening plot, births against day with one point per day; the range under it narrows the days shown
+const SQ = { a: 0, b: P.n - 1 };
 function seqGeo() {
   const cv = $("cv-seq"), W = Math.max(280, cv.parentElement.clientWidth), narrow = W < 560;
-  const L = narrow ? 34 : 52, R = 4, T = 22, B = narrow ? 40 : 44, Hh = Math.round(clamp(W * (narrow ? 0.62 : 0.3), 210, 330));
+  const L = narrow ? 34 : 52, R = 12, T = 22, B = narrow ? 40 : 44, Hh = Math.round(clamp(W * (narrow ? 0.62 : 0.3), 210, 330));
   let lo = Infinity, hi = 0; for (let i = 0; i < P.n; i++) { lo = Math.min(lo, P.b[i]); hi = Math.max(hi, P.b[i]); }
   lo = Math.floor(lo / 1000) * 1000; hi = Math.ceil(hi / 1000) * 1000;
-  const x0 = L, x1 = W - R, y0 = Hh - B, y1 = T;
-  return { W, Hh, narrow, lo, hi, x0, x1, y0, y1, x: (i) => x0 + (i / (P.n - 1)) * (x1 - x0), y: (v) => y0 - ((v - lo) / (hi - lo)) * (y0 - y1) };
+  const x0 = L, x1 = W - R, y0 = Hh - B, y1 = T, a = SQ.a, b = SQ.b;
+  return { W, Hh, narrow, lo, hi, x0, x1, y0, y1, a, b, x: (i) => x0 + ((i - a) / (b - a)) * (x1 - x0), y: (v) => y0 - ((v - lo) / (hi - lo)) * (y0 - y1) };
+}
+// tick marks that suit the span shown, years, then months, then weeks
+function seqTicks(a, b, narrow) {
+  const span = b - a, out = [], maxL = narrow ? 5 : 9;
+  if (span > 3 * 365) {
+    const st = span / 365 > maxL ? 2 : 1;
+    for (let i = a; i <= b; i++) if (P.mon[i] === 0 && P.dom[i] === 1) { const Y = P.E.years[P.yi[i]]; if (Y % st === 0) out.push([i, narrow ? "’" + String(Y).slice(2) : String(Y)]); }
+  } else if (span > 75) {
+    const st = [1, 2, 3, 6, 12].find((s) => span / 30.4 / s <= maxL);
+    let first = true;
+    for (let i = a; i <= b; i++) if (P.dom[i] === 1 && P.mon[i] % st === 0) { const Y = P.E.years[P.yi[i]]; out.push([i, MON[P.mon[i]] + (first || P.mon[i] === 0 ? " " + (narrow ? "’" + String(Y).slice(2) : Y) : "")]); first = false; }
+  } else {
+    const st = [1, 2, 3, 4].find((s) => span / 7 / s <= maxL); let w = 0;
+    for (let i = a; i <= b; i++) if (P.wd[i] === 0) { if (w % st === 0) out.push([i, MON[P.mon[i]] + " " + P.dom[i]]); w++; }
+  }
+  return out;
 }
 function drawSeq() {
   const cv = $("cv-seq"), S = seqGeo(), d = Math.min(2, window.devicePixelRatio || 1);
   if (cv.width !== Math.round(S.W * d) || cv.height !== Math.round(S.Hh * d)) { cv.width = Math.round(S.W * d); cv.height = Math.round(S.Hh * d); cv.style.height = S.Hh + "px"; }
   const ctx = cv.getContext("2d"); ctx.setTransform(d, 0, 0, d, 0, 0); ctx.clearRect(0, 0, S.W, S.Hh);
-  const ticks = niceTicks(S.lo, S.hi, S.narrow ? 3 : 4), r = S.narrow ? 0.85 : 1.1, ff = getComputedStyle(document.body).fontFamily;
+  const span = S.b - S.a, ticks = niceTicks(S.lo, S.hi, S.narrow ? 3 : 4), ff = getComputedStyle(document.body).fontFamily;
+  const r = clamp((S.narrow ? 0.85 : 1.1) * Math.pow(P.n / span, 0.35), S.narrow ? 0.85 : 1.1, 3.2);
   ctx.fillStyle = COL.rule; ticks.forEach((v) => ctx.fillRect(S.x0, Math.round(S.y(v)), S.x1 - S.x0, 1));
-  ctx.fillStyle = COL.ink; ctx.globalAlpha = 0.5;
-  for (let i = 0; i < P.n; i++) ctx.fillRect(S.x(i) - r, S.y(P.b[i]) - r, 2 * r, 2 * r);
+  if (span <= 400) {   // close up, a faint line joins the days so the weekly zigzag shows
+    ctx.strokeStyle = COL.ink; ctx.globalAlpha = 0.22; ctx.lineWidth = 1; ctx.beginPath();
+    for (let i = S.a; i <= S.b; i++) { const X = S.x(i), Y = S.y(P.b[i]); i === S.a ? ctx.moveTo(X, Y) : ctx.lineTo(X, Y); }
+    ctx.stroke();
+  }
+  ctx.fillStyle = COL.ink; ctx.globalAlpha = span > 1500 ? 0.5 : 0.7;
+  for (let i = S.a; i <= S.b; i++) { ctx.beginPath(); ctx.arc(S.x(i), S.y(P.b[i]), r, 0, 6.2832); ctx.fill(); }
   ctx.globalAlpha = 1; ctx.font = "500 " + (S.narrow ? 10.5 : 12) + "px " + ff; ctx.fillStyle = COL.muted;
   ctx.textAlign = "right"; ctx.textBaseline = "middle";
   ticks.forEach((v) => ctx.fillText(S.narrow ? v / 1000 + "k" : fmtN(v), S.x0 - 7, S.y(v)));
   ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; ctx.fillText("Births", 0, 12);
   ctx.textAlign = "center";
-  P.E.years.forEach((yr, k) => { if (yr % 2 === 0) { const X = S.x(P.bySlot[k][0]); ctx.fillRect(X - 0.5, S.y0 + 2, 1, 4); ctx.fillText(S.narrow ? "’" + String(yr).slice(2) : String(yr), X, S.y0 + 18); } });
+  seqTicks(S.a, S.b, S.narrow).forEach(([i, lab]) => { const X = S.x(i); ctx.fillRect(X - 0.5, S.y0 + 2, 1, 4); ctx.fillText(lab, X, S.y0 + 18); });
   ctx.fillText("Day", (S.x0 + S.x1) / 2, S.Hh - 4);
+  // the range under the plot lines up with its x axis, handle centers at the two ends
+  const xr = $("xr"); xr.style.marginLeft = S.x0 - 11 + "px"; xr.style.width = S.x1 - S.x0 + 22 + "px";
+  $("xr-fill").style.left = (SQ.a / (P.n - 1)) * 100 + "%"; $("xr-fill").style.right = (1 - SQ.b / (P.n - 1)) * 100 + "%";
+  const zoomed = SQ.a > 0 || SQ.b < P.n - 1, dl = (i) => MON[P.mon[i]] + " " + P.dom[i] + ", " + P.E.years[P.yi[i]];
+  $("xrl").style.visibility = zoomed ? "" : "hidden"; $("xrl").style.marginLeft = S.x0 + "px"; $("xrl").style.marginRight = S.W - S.x1 + "px";
+  $("xr-la").textContent = dl(SQ.a); $("xr-lb").textContent = dl(SQ.b);
 }
 function seqTip(e) {
   const cv = $("cv-seq"), r = cv.getBoundingClientRect(), S = seqGeo(), x = e.clientX - r.left, y = e.clientY - r.top, tip = $("stip");
-  const j = Math.round(((x - S.x0) / (S.x1 - S.x0)) * (P.n - 1));
-  if (j < 0 || j >= P.n || y < S.y1 - 8 || y > S.y0 + 8) { tip.hidden = true; return; }
+  const j = S.a + Math.round(((x - S.x0) / (S.x1 - S.x0)) * (S.b - S.a));
+  if (j < S.a || j > S.b || y < S.y1 - 8 || y > S.y0 + 8) { tip.hidden = true; return; }
   tip.innerHTML = "<b>" + WDL[P.wd[j]] + ", " + slotLong(P.sl[j]) + ", " + P.E.years[P.yi[j]] + "</b><br>" + fmtN(P.b[j]) + " births"; tip.hidden = false;
   const tw = tip.offsetWidth; let tx = x + 14; if (tx + tw > r.width - 4) tx = x - tw - 14;
   tip.style.left = Math.max(4, tx) + "px"; tip.style.top = (y + 16) + "px";
@@ -486,6 +526,9 @@ $("cv-seq").addEventListener("pointermove", seqTip);
 $("cv-seq").addEventListener("pointerdown", seqTip);
 $("cv-seq").addEventListener("pointerleave", (e) => { if (e.pointerType === "mouse") $("stip").hidden = true; });
 document.addEventListener("pointerdown", (e) => { if (e.target.id !== "cv-seq") $("stip").hidden = true; });
+{ const A = $("xr-a"), Bn = $("xr-b"), GAP = 28; A.max = Bn.max = P.n - 1; Bn.value = P.n - 1;
+  A.addEventListener("input", () => { SQ.a = Math.min(+A.value, SQ.b - GAP); A.value = SQ.a; $("stip").hidden = true; drawSeq(); });
+  Bn.addEventListener("input", () => { SQ.b = Math.max(+Bn.value, SQ.a + GAP); Bn.value = SQ.b; $("stip").hidden = true; drawSeq(); }); }
 // a sideways swipe across the heat map moves one step forward or back
 { const cv = $("cv-fab"); let sx = null, sy = 0, st = 0;
   cv.addEventListener("pointerdown", (e) => { if (e.pointerType === "mouse") return; sx = e.clientX; sy = e.clientY; st = performance.now(); });
