@@ -54,17 +54,17 @@ h2{font-weight:800;font-size:clamp(30px,4.6vw,52px);line-height:.95;letter-spaci
 @media (min-width:601px) and (max-width:1180px){.steps{flex-wrap:wrap;overflow:visible}}
 .seqwrap{position:relative;margin:30px 0 0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
 #cv-seq{cursor:crosshair;touch-action:pan-y}
-.xr{position:relative;height:30px;margin-top:2px}
-.xrt{position:absolute;left:11px;right:11px;top:12px;height:6px;border-radius:6px;background:var(--rule)}
-.xrt i{position:absolute;top:0;bottom:0;border-radius:6px;background:var(--ink)}
-.xr input{position:absolute;left:0;top:0;width:100%;height:30px;margin:0;background:transparent;-webkit-appearance:none;appearance:none;pointer-events:none;touch-action:none}
-.xr input::-webkit-slider-runnable-track{height:30px;background:transparent}
-.xr input::-moz-range-track{background:transparent}
-.xr input::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;pointer-events:auto;width:22px;height:22px;margin-top:4px;border-radius:50%;background:var(--panel);border:2px solid var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:grab}
-.xr input::-moz-range-thumb{pointer-events:auto;width:18px;height:18px;border-radius:50%;background:var(--panel);border:2px solid var(--ink);cursor:grab}
-.xr input:focus-visible{outline:none}
-.xr input:focus-visible::-webkit-slider-thumb{outline:2px solid var(--pink);outline-offset:2px}
-.xrl{display:flex;justify-content:space-between;font-size:13px;color:var(--ink2);min-height:18px}
+.xr{height:30px;margin-top:2px}
+.xr input{display:block;width:100%;height:30px;margin:0;background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer;touch-action:none}
+.xr input::-webkit-slider-runnable-track{height:6px;border-radius:6px;background:var(--rule)}
+.xr input::-moz-range-track{height:6px;border-radius:6px;background:var(--rule)}
+.xr input::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;margin-top:-8px;border-radius:50%;background:var(--panel);border:2px solid var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.xr input::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--panel);border:2px solid var(--ink)}
+.xr.sel input::-webkit-slider-thumb{background:var(--pink);border-color:var(--pink)}
+.xr.sel input::-moz-range-thumb{background:var(--pink);border-color:var(--pink)}
+.xr input:focus-visible{outline:2px solid var(--pink);outline-offset:3px;border-radius:8px}
+.xrl{margin:4px 0 0;font-size:14px;color:var(--ink2);min-height:1.4em}
+.xrl b{color:var(--ink);font-weight:650}
 /* on a phone the steps become a row of numbered buttons, with the current step named underneath */
 @media (max-width:600px){
   .steps{overflow:visible;gap:6px;margin:24px 0 8px}
@@ -182,7 +182,7 @@ footer{margin:56px 0 40px;padding-top:16px;border-top:1px solid var(--rule);font
 <header>
   <h1>When are<br>we born?</h1>
   <p class="lede">All <span id="lede-n">62,187,024</span> births in the United States from 2000 to 2014.</p>
-  <div class="seqwrap"><canvas id="cv-seq" role="img" aria-label="Births per day from 2000 to 2014, one point per day"></canvas><div class="tip" id="stip" hidden></div><div class="xr" id="xr"><span class="xrt"><i id="xr-fill"></i></span><input type="range" id="xr-a" min="0" max="5478" step="1" value="0" aria-label="First day shown"><input type="range" id="xr-b" min="0" max="5478" step="1" value="5478" aria-label="Last day shown"></div><div class="xrl" id="xrl"><span id="xr-la"></span><span id="xr-lb"></span></div></div>
+  <div class="seqwrap"><canvas id="cv-seq" role="img" aria-label="Births per day from 2000 to 2014, one point per day"></canvas><div class="tip" id="stip" hidden></div><div class="xr" id="xr"><input type="range" id="xs" min="0" max="5478" step="1" value="0" aria-label="Choose a day"></div><p class="xrl" id="xrl"></p></div>
 </header>
 
 <section aria-label="Every day, one row per year">
@@ -460,8 +460,8 @@ function fabTip(e) {
   f.addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse" && e.target.closest(".rd")) f.classList.toggle("open"); });
   document.addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse" && !(e.target.closest && e.target.closest(".rd"))) f.classList.remove("open"); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") f.classList.remove("open"); }); }
-// the opening plot, births against day with one point per day; the range under it narrows the days shown
-const SQ = { a: 0, b: P.n - 1 };
+// the opening plot, births against day with one point per day; the slider under it picks out one day
+const SQ = { a: 0, b: P.n - 1, sel: -1 };
 function seqGeo() {
   const cv = $("cv-seq"), W = Math.max(280, cv.parentElement.clientWidth), narrow = W < 560;
   const L = narrow ? 34 : 52, R = 12, T = 22, B = narrow ? 40 : 44, Hh = Math.round(clamp(W * (narrow ? 0.62 : 0.3), 210, 330));
@@ -507,12 +507,15 @@ function drawSeq() {
   ctx.textAlign = "center";
   seqTicks(S.a, S.b, S.narrow).forEach(([i, lab]) => { const X = S.x(i); ctx.fillRect(X - 0.5, S.y0 + 2, 1, 4); ctx.fillText(lab, X, S.y0 + 18); });
   ctx.fillText("Day", (S.x0 + S.x1) / 2, S.Hh - 4);
-  // the range under the plot lines up with its x axis, handle centers at the two ends
-  const xr = $("xr"); xr.style.marginLeft = S.x0 - 11 + "px"; xr.style.width = S.x1 - S.x0 + 22 + "px";
-  $("xr-fill").style.left = (SQ.a / (P.n - 1)) * 100 + "%"; $("xr-fill").style.right = (1 - SQ.b / (P.n - 1)) * 100 + "%";
-  const zoomed = SQ.a > 0 || SQ.b < P.n - 1, dl = (i) => MON[P.mon[i]] + " " + P.dom[i] + ", " + P.E.years[P.yi[i]];
-  $("xrl").style.visibility = zoomed ? "" : "hidden"; $("xrl").style.marginLeft = S.x0 + "px"; $("xrl").style.marginRight = S.W - S.x1 + "px";
-  $("xr-la").textContent = dl(SQ.a); $("xr-lb").textContent = dl(SQ.b);
+  if (SQ.sel >= 0) {   // the chosen day, a guide down to the axis and the point itself
+    const X = S.x(SQ.sel), Y = S.y(P.b[SQ.sel]);
+    ctx.fillStyle = COL.pink; ctx.fillRect(X - 0.75, S.y1, 1.5, S.y0 - S.y1);
+    ctx.beginPath(); ctx.arc(X, Y, 5, 0, 6.2832); ctx.fill(); ctx.strokeStyle = COL.panel; ctx.lineWidth = 2; ctx.stroke();
+  }
+  // the slider lines up with the x axis, its handle centered on the first and last day at the two ends
+  const xr = $("xr"); xr.style.marginLeft = S.x0 - 11 + "px"; xr.style.width = S.x1 - S.x0 + 22 + "px"; xr.classList.toggle("sel", SQ.sel >= 0);
+  $("xrl").style.marginLeft = S.x0 + "px";
+  $("xrl").innerHTML = SQ.sel >= 0 ? "<b>" + fmtN(P.b[SQ.sel]) + " births</b> on " + WDL[P.wd[SQ.sel]] + ", " + slotLong(P.sl[SQ.sel]) + ", " + P.E.years[P.yi[SQ.sel]] : "";
 }
 function seqTip(e) {
   const cv = $("cv-seq"), r = cv.getBoundingClientRect(), S = seqGeo(), x = e.clientX - r.left, y = e.clientY - r.top, tip = $("stip");
@@ -526,9 +529,9 @@ $("cv-seq").addEventListener("pointermove", seqTip);
 $("cv-seq").addEventListener("pointerdown", seqTip);
 $("cv-seq").addEventListener("pointerleave", (e) => { if (e.pointerType === "mouse") $("stip").hidden = true; });
 document.addEventListener("pointerdown", (e) => { if (e.target.id !== "cv-seq") $("stip").hidden = true; });
-{ const A = $("xr-a"), Bn = $("xr-b"), GAP = 28; A.max = Bn.max = P.n - 1; Bn.value = P.n - 1;
-  A.addEventListener("input", () => { SQ.a = Math.min(+A.value, SQ.b - GAP); A.value = SQ.a; $("stip").hidden = true; drawSeq(); });
-  Bn.addEventListener("input", () => { SQ.b = Math.max(+Bn.value, SQ.a + GAP); Bn.value = SQ.b; $("stip").hidden = true; drawSeq(); }); }
+{ const s = $("xs"); s.max = P.n - 1;
+  const pick = () => { SQ.sel = +s.value; $("stip").hidden = true; drawSeq(); };
+  s.addEventListener("input", pick); s.addEventListener("pointerup", () => { if (SQ.sel !== +s.value) pick(); }); }
 // a sideways swipe across the heat map moves one step forward or back
 { const cv = $("cv-fab"); let sx = null, sy = 0, st = 0;
   cv.addEventListener("pointerdown", (e) => { if (e.pointerType === "mouse") return; sx = e.clientX; sy = e.clientY; st = performance.now(); });
