@@ -213,7 +213,7 @@ footer{margin:56px 0 40px;padding-top:16px;border-top:1px solid var(--rule);font
   <p class="sub">Daily births decomposed into four sources of variation.</p>
   <button type="button" class="tog" id="show-data" role="switch" aria-checked="false"><span class="trk"></span>Show data</button>
   <div class="grid2">
-    <div class="card"><h3>Long term trend</h3><p id="drift-say">The trend has a time scale of about eight months. The pale line smooths it over about three years. Births rose during the economic expansion of the mid 2000s and fell during and after the Great Recession (2007 to 2009).</p><div id="g-drift"></div><div class="keys"><span><i class="sw" style="background:var(--teal);opacity:.45;height:5px"></i>smoothed over three years</span><span><i class="sw" style="background:var(--ink)"></i>trend</span></div></div>
+    <div class="card"><h3>Long term trend</h3><p id="drift-say">The trend is shown smoothed over about three years. Births rose during the economic expansion of the mid 2000s and fell during and after the Great Recession (2007 to 2009).</p><div id="g-drift"></div></div>
     <div class="card"><h3>Season</h3><p>Each line represents one year. Births peak in September, approximately 38 weeks after the winter holidays…</p><div id="g-year"></div><div class="yearkey"><span class="y0"></span><input type="range" class="yr" min="0" max="14" step="1" value="14" aria-label="Highlight one year"><span class="y1"></span><b class="ysel" aria-live="polite"></b></div></div>
     <div class="card"><h3>Day of week</h3><p>Each line represents one year. Births are most frequent on Tuesday and least frequent on Sunday.</p><div id="g-week"></div><div class="yearkey"><span class="y0"></span><input type="range" class="yr" min="0" max="14" step="1" value="14" aria-label="Highlight one year"><span class="y1"></span><b class="ysel" aria-live="polite"></b></div></div>
     <div class="card"><h3>Day of year</h3><p>Effect of each calendar date on weekday births after adjustment for day of week and season.</p><div id="g-cal"></div></div>
@@ -603,16 +603,15 @@ function svgWrap(f, inner, label) { return '<svg viewBox="0 0 ' + f.W + " " + f.
 // the drift
 function drawDrift() {
   const el = $("g-drift"), f = frame(el, 0.56, [10, 8, 28, 40]), n = P.n;
-  const a = [], b = []; let lo = 0, hi = 0;
-  for (let i = 0; i < n; i += 2) { const s0 = pc(P.slow[i]), sf = pc(P.slow[i] + P.fast[i]); a.push([i, s0]); b.push([i, sf]); lo = Math.min(lo, sf, s0); hi = Math.max(hi, sf, s0); }
+  const a = []; let lo = 0, hi = 0;
+  for (let i = 0; i < n; i += 2) { const s0 = pc(P.slow[i]); a.push([i, s0]); lo = Math.min(lo, s0); hi = Math.max(hi, s0); }   // only the slow trend is drawn, the faster part shows in the data points
   PR.trend.forEach((q) => { lo = Math.min(lo, q[1]); hi = Math.max(hi, q[1]); });   // axes allow for the points either way, so the switch never rescales
   lo = Math.floor(lo / 5) * 5; hi = Math.ceil(hi / 5) * 5;
   const x = sc(0, n - 1, f.x0, f.x1), y = sc(lo, hi, f.y0, f.y1);
   let s = yGrid(f, y, lo, hi, 5, pctLab);
   P.E.years.forEach((yr, r) => { if (yr % (P.nY > 16 ? 4 : 2) === 0) { const i = P.bySlot[r][0]; s += '<text x="' + x(i).toFixed(1) + '" y="' + (f.y0 + 20) + '" text-anchor="middle">' + yr + "</text>"; } });
-  s += '<path d="' + path(a.map((p) => [x(p[0]), y(p[1])])) + '" fill="none" stroke="' + COL.teal + '" stroke-opacity=".45" stroke-width="5" stroke-linecap="round"/>';
-  if (SHOW.on) s += PR.trend.map(([i, v]) => dot(x(i), y(v), 2.3, COL.ink, 0.3)).join("");   // above the pale slow line, so the points look the same everywhere
-  s += '<path d="' + path(b.map((p) => [x(p[0]), y(p[1])])) + '" fill="none" stroke="' + COL.ink + '" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>';
+  if (SHOW.on) s += PR.trend.map(([i, v]) => dot(x(i), y(v), 2.3, COL.ink, 0.3)).join("");
+  s += '<path d="' + path(a.map((p) => [x(p[0]), y(p[1])])) + '" fill="none" stroke="' + COL.ink + '" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>';
   el.innerHTML = svgWrap(f, s, "Long term trend in births");
 }
 // one line per year, shared by the week and the year panels; hovering a year lights it in both
