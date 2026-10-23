@@ -855,7 +855,7 @@ function drawSix() {
 }
 
 // ---------- residuals: every day against the model, with a normal curve of the same SD ----------
-const RS = { log: false, abs: false, hi: -1, hb: -1 };
+const RS = { log: false, abs: false, hi: -1 };
 const erf = (x) => { const s = Math.sign(x), t = 1 / (1 + 0.3275911 * Math.abs(x)); return s * (1 - ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x)); };
 const RSD = (() => { const v = RD.pv, n = v.length, m = v.reduce((a, b) => a + b, 0) / n, s = Math.sqrt(v.reduce((a, b) => a + (b - m) * (b - m), 0) / n); return { m, s, n }; })();
 function drawResid() {
@@ -865,7 +865,6 @@ function drawResid() {
   const x = sc(lo, lim, f.x0, f.x1), cmax = Math.max(...cnt);
   const yl = RS.log ? ((c) => f.y0 - (Math.log10(Math.max(c, 0.5)) - Math.log10(0.5)) / (Math.log10(cmax * 1.6) - Math.log10(0.5)) * (f.y0 - f.y1)) : ((c) => f.y0 - c / (cmax * 1.05) * (f.y0 - f.y1));
   let s = "";
-  if (RS.hb >= 0 && RS.hb < nb) s += '<rect x="' + x(lo + RS.hb * BW).toFixed(1) + '" y="' + f.y1 + '" width="' + (x(BW) - x(0)).toFixed(1) + '" height="' + (f.y0 - f.y1) + '" fill="' + COL.amber + '" fill-opacity=".14"/>';
   // the count axis
   const ticks = RS.log ? [1, 10, 100, 1000].filter((t) => t <= cmax * 1.6) : niceTicks(0, cmax * 1.05, 4).filter((t) => t <= cmax * 1.05);
   ticks.forEach((t) => { const yy = yl(t).toFixed(1); s += '<line x1="' + f.x0 + '" x2="' + f.x1 + '" y1="' + yy + '" y2="' + yy + '" stroke="' + COL.rule + '"/><text x="' + (f.x0 - 6) + '" y="' + (+yy + 4) + '" text-anchor="end">' + fmtN(t) + "</text>"; });
@@ -907,15 +906,7 @@ function residTip(e) {
     const r = RD.rows[k], i = r.i;
     html = "<b>" + r.name + ", " + WDL[P.wd[i]] + "</b><br>" + fmtN(P.b[i]) + " births, " + fmtN(Math.round(P.b[i] / Math.exp(P.steps[5][i]))) + " expected<br>" + sgn(r.v, 1) + ", rank " + fmtN(r.rank) + " of " + fmtN(P.n);
   }
-  // anywhere in a bar's column reads that bar, since the bars in the tails are too thin to point at
-  let hb = -1;
-  if (k < 0 && sx >= G.x0 && sx <= G.x1 && sy >= G.y1 - 20 && sy <= G.y0 + 3) hb = clamp(Math.floor((G.lo + (sx - G.x0) / (G.x1 - G.x0) * (G.lim - G.lo) - G.lo) / G.BW), 0, G.cnt.length - 1);
-  if (hb >= 0) {
-    const b = hb, a0 = G.lo + b * G.BW, a1 = a0 + G.BW, c = G.cnt[b], ex = G.dens(a0 + G.BW / 2);
-    const lab = (u) => (G.ab ? u.toFixed(1) + "%" : sgn(u, 1));
-    html = "<b>" + fmtN(c) + (c === 1 ? " day" : " days") + "</b> between " + lab(a0) + " and " + lab(a1) + "<br>Normal curve expects " + (ex < 0.1 ? "almost none" : ex < 10 ? ex.toFixed(1) : fmtN(Math.round(ex)));
-  }
-  if (RS.hi !== k || RS.hb !== hb) { RS.hi = k; RS.hb = hb; drawResid(); }
+  if (RS.hi !== k) { RS.hi = k; drawResid(); }
   if (!html) { tip.hidden = true; return; }
   tip.innerHTML = html; tip.hidden = false;
   const tw = tip.offsetWidth, px = e.clientX - card.left, py = e.clientY - card.top;
@@ -923,16 +914,16 @@ function residTip(e) {
 }
 $("g-resid").addEventListener("pointermove", (e) => { if (e.pointerType === "mouse") residTip(e); });
 $("g-resid").addEventListener("pointerdown", (e) => { if (e.pointerType !== "mouse") residTip(e); });
-const rClear = () => { $("rtip").hidden = true; if (RS.hi >= 0 || RS.hb >= 0) { RS.hi = -1; RS.hb = -1; drawResid(); } };
+const rClear = () => { $("rtip").hidden = true; if (RS.hi >= 0) { RS.hi = -1; drawResid(); } };
 $("g-resid").addEventListener("pointerleave", (e) => { if (e.pointerType === "mouse") rClear(); });
 document.addEventListener("pointerdown", (e) => { if (!e.composedPath().some((n) => n.id === "g-resid" || n.id === "r-body")) rClear(); });   // the path, since a tap may already have redrawn what it hit
-["r-log", "r-abs"].forEach((id) => $(id).addEventListener("click", (e) => { const key = id === "r-log" ? "log" : "abs"; RS[key] = !RS[key]; e.currentTarget.setAttribute("aria-checked", String(RS[key])); RS.hb = -1; RS.hi = -1; $("rtip").hidden = true; drawResid(); }));
+["r-log", "r-abs"].forEach((id) => $(id).addEventListener("click", (e) => { const key = id === "r-log" ? "log" : "abs"; RS[key] = !RS[key]; e.currentTarget.setAttribute("aria-checked", String(RS[key])); RS.hi = -1; $("rtip").hidden = true; drawResid(); }));
 $("r-body").innerHTML = RD.rows.map((r, k) => '<tr data-k="' + k + '"><td>' + r.name + "</td><td>" + WD[P.wd[r.i]] + '</td><td class="r ' + (r.v < 0 ? "neg" : "pos") + '">' + sgn(r.v, 1) + '</td><td class="r">' + fmtN(r.rank) + "</td></tr>").join("");
 $("r-body").addEventListener("pointerover", (e) => { const tr = e.target.closest("tr"); if (tr && RS.hi !== +tr.dataset.k) { RS.hi = +tr.dataset.k; drawResid(); } });
 $("r-body").addEventListener("pointerleave", () => { if (RS.hi >= 0) { RS.hi = -1; drawResid(); } });
 { const z = 4, beyond = RD.pv.filter((v) => Math.abs(v - RSD.m) > z * RSD.s).length, ex = RSD.n * (1 - erf(z / Math.SQRT2));
   const pr = 100 * (1 - erf(z / Math.SQRT2));
-  $("r-tail").textContent = "Each day's count adds up thousands of separate births. If only chance were left, the central limit theorem says the residuals would follow the normal curve. There are " + beyond + " days out of " + fmtN(RSD.n) + " more than " + z + " standard deviations (±" + (z * RSD.s).toFixed(1) + "%) away from model expected. Under a normal model this would happen " + Number(pr.toPrecision(1)) + "% of the time, or on about " + ex.toFixed(2) + " days."; }
+  $("r-tail").textContent = "Each day's count is a sum of many small chances. If the modeling were finished and the deviations were only noise, we would expect them to be approximately normal because of the central limit theorem. There are " + beyond + " days out of " + fmtN(RSD.n) + " more than " + z + " standard deviations (±" + (z * RSD.s).toFixed(1) + "%) away from model expected. Under a normal model this would happen " + Number(pr.toPrecision(1)) + "% of the time, or on about " + ex.toFixed(2) + " days."; }
 
 // ---------- the data ----------
 const dYears = P.E.years, dState = { show: 200 };
