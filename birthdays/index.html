@@ -36,7 +36,7 @@ h1{font-weight:800;font-size:clamp(48px,10vw,128px);line-height:.86;letter-spaci
 .steps button:focus-visible,select:focus-visible{outline:2px solid var(--pink);outline-offset:2px}
 section{padding:clamp(30px,5vw,56px) 0 0}
 h2{font-weight:800;font-size:clamp(30px,4.6vw,52px);line-height:.95;letter-spacing:-.02em;margin:0;font-variation-settings:"wdth" 78,"opsz" 72}
-.sub{color:var(--ink2);margin:10px 0 0;max-width:40em}
+.sub{color:var(--ink2);margin:10px 0 0;max-width:40em}.intro{position:relative;color:var(--ink2);margin:12px 0 0;max-width:40em;font-size:17px;line-height:1.5}.intro p{margin:0}.peek{cursor:pointer;border-bottom:1px dotted var(--muted);-webkit-tap-highlight-color:transparent;outline:none}.peek:hover,.peek[aria-expanded="true"]{border-bottom-color:var(--ink)}.peek:focus-visible{outline:2px solid var(--pink);outline-offset:2px;border-radius:2px}.peekbox{position:absolute;z-index:8;top:calc(100% + 8px);left:0;background:var(--panel);border:1px solid var(--rule);border-radius:12px;padding:10px 14px 12px;box-shadow:0 14px 34px -14px rgba(13,38,33,.45);font-size:14.5px;min-width:220px}.peekbox table{border-collapse:collapse;font-variant-numeric:tabular-nums;width:100%}.peekbox th{font-weight:650;font-size:13px;color:var(--ink2);text-align:left;padding:2px 10px 6px 0;border-bottom:1px solid var(--rule)}.peekbox td{padding:4px 10px 4px 0;color:var(--ink)}.peekbox .r{text-align:right;padding-right:0}.peekbox .gap td{color:var(--muted)}.peekfoot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;font-size:13px;color:var(--ink2)}.peekfoot .dbtn{font-size:13px;padding:7px 12px}.noteh{margin:30px 0 0;font-size:21px;font-weight:750;letter-spacing:-.01em;font-variation-settings:"wdth" 85,"opsz" 40;color:var(--ink)}
 /* the fabric */
 .steps{position:relative;display:flex;gap:6px;margin:8px 0 14px;overflow-x:auto;scrollbar-width:none;padding:20px 0 2px}
 .steps .sbrw{position:absolute;inset:0;pointer-events:none}.steps .sbr{position:absolute;height:7px;border-top:1px solid #8fa59d}.steps .sbr.s0{border-left:1px solid #8fa59d;border-top-left-radius:3px}.steps .sbr.s1{border-right:1px solid #8fa59d;border-top-right-radius:3px}
@@ -55,7 +55,7 @@ h2{font-weight:800;font-size:clamp(30px,4.6vw,52px);line-height:.95;letter-spaci
 .steps button.done{border-color:var(--ink2)}
 .steps .sbrk{display:none}
 @media (min-width:861px) and (max-width:1150px){.steps{flex-wrap:wrap;overflow:visible;row-gap:24px}.steps .sbrk{display:block;flex-basis:100%;height:0}.steps .sdiv{display:none}}
-.dens{margin:26px 0 0}.denshead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 18px}.dcap{margin:0;font-size:15px;color:var(--ink2)}.denshead .tog{margin:0}#g-dens svg{display:block;width:100%;height:auto;-webkit-user-select:none;user-select:none}
+.dens{position:relative;margin:26px 0 0}#g-dens .mm{cursor:help}.denshead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 18px}.dcap{margin:0;font-size:15px;color:var(--ink2)}.denshead .tog{margin:0}#g-dens svg{display:block;width:100%;height:auto;-webkit-user-select:none;user-select:none}
 .seqwrap{position:relative;margin:30px 0 0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
 #cv-seq{cursor:crosshair;touch-action:pan-y}
 .xr{height:30px;margin-top:2px}
@@ -96,7 +96,7 @@ canvas{display:block;width:100%;touch-action:pan-y}
 .meter .term{border-bottom:1px dotted var(--muted);cursor:help;outline:none}
 .meter .term:focus-visible{outline:2px solid var(--pink);outline-offset:2px;border-radius:2px}
 #fab-say{position:relative}
-#fab-say .rdl{color:inherit;text-decoration:none;border-bottom:1px dotted var(--muted)}#fab-say .rdl:hover{border-bottom-color:var(--ink)}#fab-say .rdl:focus-visible{outline:2px solid var(--pink);outline-offset:2px;border-radius:2px}
+#fab-say .para{display:block;margin-top:.6em}#fab-say .rdl{color:inherit;text-decoration:none;border-bottom:1px dotted var(--muted)}#fab-say .rdl:hover{border-bottom-color:var(--ink)}#fab-say .rdl:focus-visible{outline:2px solid var(--pink);outline-offset:2px;border-radius:2px}
 .mnote{display:none;position:absolute;z-index:6;top:calc(100% + 8px);right:0;width:min(330px,calc(100vw - 32px));white-space:normal;background:var(--ink);color:var(--panel);border-radius:10px;padding:10px 12px;font-size:13.5px;line-height:1.45;box-shadow:0 10px 30px -12px rgba(0,0,0,.5)}
 .meter.open .mnote,.meter .term:focus-visible~.mnote{display:block}
 @media (hover:hover){.meter .term:hover~.mnote{display:block}}
@@ -110,7 +110,7 @@ canvas{display:block;width:100%;touch-action:pan-y}
 /* panels */
 .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}
 .card{background:var(--panel);border-radius:18px;padding:18px 18px 12px;min-width:0}
-.resid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;margin-top:22px;align-items:start}.rcard{position:relative}.rtog{display:flex;flex-wrap:wrap;gap:4px 22px}.rtog .tog{margin:0 0 6px}#g-resid svg{display:block;width:100%;height:auto;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}.rdot{width:9px!important;height:9px!important;border-radius:50%!important;vertical-align:middle}.rnote{margin:10px 0 4px;font-size:14.5px;color:var(--ink2)}.rtab{width:100%;border-collapse:collapse;font-size:14.5px;font-variant-numeric:tabular-nums;margin-top:10px}.rtab th{text-align:left;font-weight:650;font-size:13px;color:var(--ink2);padding:6px 8px;border-bottom:1px solid var(--rule)}.rtab td{padding:5px 8px;border-bottom:1px solid #dfe8e3}.rtab .r{text-align:right}.rtab tr.on td{background:#e6eee9}.rtab td.neg{color:var(--blue)}.rtab td.pos{color:var(--pink)}.rtab tbody tr{cursor:default}@media (max-width:820px){.resid{grid-template-columns:minmax(0,1fr)}}
+.resid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;margin-top:22px;align-items:start}.rcard{position:relative}.rtog{display:flex;flex-wrap:wrap;gap:4px 22px}.rtog .tog{margin:0 0 6px}#g-resid svg{display:block;width:100%;height:auto;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}.rdot{width:9px!important;height:9px!important;border-radius:50%!important;vertical-align:middle}.rdot+.rdot{margin-left:-3px}.rnote{margin:10px 0 4px;font-size:14.5px;color:var(--ink2)}.rtab{width:100%;border-collapse:collapse;font-size:14.5px;font-variant-numeric:tabular-nums;margin-top:10px}.rtab th{text-align:left;font-weight:650;font-size:13px;color:var(--ink2);padding:6px 8px;border-bottom:1px solid var(--rule)}.rtab td{padding:5px 8px;border-bottom:1px solid #dfe8e3}.rtab .r{text-align:right}.rtab tr.on td{background:#e6eee9}.rtab td.neg{color:var(--blue)}.rtab td.pos{color:var(--pink)}.rtab tbody tr{cursor:default}@media (max-width:820px){.resid{grid-template-columns:minmax(0,1fr)}}
 .card h3{margin:0;font-size:21px;font-weight:750;letter-spacing:-.01em;font-variation-settings:"wdth" 85,"opsz" 40}
 .card p{margin:4px 0 8px;font-size:14.5px;line-height:1.4;color:var(--ink2)}
 .card.wide{grid-column:1/-1}
@@ -154,14 +154,14 @@ svg.hl .yl.on{opacity:1;stroke-width:3}
 .dot{display:inline-block;width:11px;height:11px;border-radius:50%}
 /* birthday */
 .six{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;margin-top:24px;align-items:start}
-.six-steps{margin:2px 0 0;padding-left:1.25em}
+.six-steps{margin:2px 0 0;padding-left:1.25em}.six-steps .nwr{white-space:nowrap}
 .six-steps li{margin:0 0 12px;line-height:1.5;color:var(--ink2)}
 .six-steps li b{color:var(--ink);font-weight:650}
 .six-steps li::marker{font-weight:700;color:var(--ink)}
-.fn{font-size:.7em;line-height:0;margin-left:1px}.fn a{color:var(--ink2);text-decoration:none;padding:0 2px;border-radius:3px}.fn a:hover{color:var(--pink)}.fn a:focus-visible{outline:2px solid var(--pink);outline-offset:1px}.tipwrap{position:relative}.six-end{margin:6px 0 10px;font-size:17.5px;font-weight:750;color:var(--ink);line-height:1.4}
+.hv{position:relative;border-bottom:1px dotted var(--muted);cursor:help;outline:none;-webkit-tap-highlight-color:transparent}.hv:focus-visible{outline:2px solid var(--pink);outline-offset:2px;border-radius:2px}.hvn{display:none;position:absolute;z-index:7;top:calc(100% + 6px);left:0;width:max-content;max-width:min(280px,calc(100vw - 24px));background:var(--ink);color:var(--panel);border-radius:10px;padding:9px 12px;font:400 13.5px/1.4 var(--f);letter-spacing:0;text-align:left;white-space:normal;box-shadow:0 10px 30px -12px rgba(0,0,0,.5)}.hv.open .hvn{display:block}
+.xl{color:inherit;text-decoration:none;border-bottom:1px dotted var(--muted)}.xl:hover{border-bottom-color:var(--ink)}.xl:focus-visible{outline:2px solid var(--pink);outline-offset:2px;border-radius:2px}.tipwrap{position:relative}.card .six-end{font-size:inherit;font-weight:400;line-height:1.5;color:var(--ink2);margin:4px 0 12px}.six-end{margin:6px 0 10px;font-size:17.5px;font-weight:750;color:var(--ink);line-height:1.4}
 .tipwrap .sx{border-bottom:1px dotted var(--muted);cursor:help;outline:none}
 .tipwrap .sx:focus-visible{outline:2px solid var(--pink);outline-offset:2px;border-radius:2px}
-.six-math{margin:0 0 10px;font-size:14.5px;color:var(--ink2);line-height:1.5;font-variant-numeric:tabular-nums;display:grid;grid-template-columns:auto auto 1fr;column-gap:.4em;row-gap:2px}.six-math .n{text-align:right}.six-math .nw{white-space:nowrap}.card .six-end{font-size:20px;line-height:1.4;margin:12px 0 12px}.card .six-math{font-size:15px;line-height:1.5;margin:0 0 10px}@media (max-width:600px){.card .six-end{font-size:18.5px}}@media (max-width:360px){.card .six-math{font-size:13px;column-gap:.3em}}
 .sxnote{display:none;position:absolute;z-index:6;top:calc(100% + 6px);left:0;width:min(320px,calc(100vw - 32px));background:var(--ink);color:var(--panel);border-radius:10px;padding:10px 12px;font-size:13.5px;font-weight:400;line-height:1.45;box-shadow:0 10px 30px -12px rgba(0,0,0,.5)}
 .tipwrap.open .sxnote,.tipwrap .sx:focus-visible~.sxnote{display:block}
 @media (hover:hover){.tipwrap .sx:hover~.sxnote{display:block}}
@@ -190,8 +190,9 @@ footer{margin:56px 0 40px;padding-top:16px;border-top:1px solid var(--rule);font
 <header>
   <h1>When are<br>we born?</h1>
   <p class="lede">All <span id="lede-n">62,187,024</span> births in the United States from 2000 to 2014.</p>
+  <div class="intro"><p>The data are just <span class="peek" id="peek" role="button" tabindex="0" aria-expanded="false" aria-controls="peekbox">two columns, a date and a count</span>.</p><div class="peekbox" id="peekbox" hidden><table><thead><tr><th>date</th><th class="r">births</th></tr></thead><tbody id="peek-body"></tbody></table><div class="peekfoot"><span id="peek-n"></span><button type="button" class="dbtn" id="raw-dl">Download CSV</button></div></div></div>
   <div class="seqwrap"><canvas id="cv-seq" role="img" aria-label="Births per day from 2000 to 2014, one point per day"></canvas><div class="tip" id="stip" hidden></div><div class="xr" id="xr"><input type="range" id="xs" min="0" max="5478" step="1" value="0" aria-label="Choose a day"></div><p class="xrl" id="xrl"></p></div>
-  <div class="dens"><div class="denshead"><p class="dcap">The same 5,479 days, ignoring when they happened.</p><button type="button" class="tog" id="dens-split" role="switch" aria-checked="false"><span class="trk"></span>Split weekdays and weekends</button></div><div id="g-dens"></div></div>
+  <div class="dens"><div class="denshead"><p class="dcap">The same 5,479 daily counts, without regard to date.</p><button type="button" class="tog" id="dens-split" role="switch" aria-checked="false"><span class="trk"></span>Split weekdays and weekends</button></div><div id="g-dens"></div><div class="tip" id="dtip" hidden></div></div>
 </header>
 
 <section aria-label="Every day, one row per year">
@@ -215,7 +216,7 @@ footer{margin:56px 0 40px;padding-top:16px;border-top:1px solid var(--rule);font
     <div class="card"><h3>Day of week</h3><p>Each line represents one year. Births are most frequent on Tuesday and least frequent on Sunday.</p><div id="g-week"></div><div class="yearkey"><span class="y0"></span><input type="range" class="yr" min="0" max="14" step="1" value="14" aria-label="Highlight one year"><span class="y1"></span><b class="ysel" aria-live="polite"></b></div></div>
     <div class="card"><h3>Day of year</h3><p>Effect of each calendar date on weekday births after adjustment for day of week and season.</p><div id="g-cal"></div></div>
   </div>
-  <p class="dnote" id="dnote" hidden>Points are averages of daily births, in percent, after removal of the other components, by month for the trend, by calendar date for season and day of year, and by weekday and year for day of week.</p>
+  <p class="dnote" id="dnote" hidden>Points are averages of daily births, in percent, after removing the other components, by month for the trend, by calendar date for season and day of year, and by weekday and year for day of week.</p>
 </section>
 
 <section>
@@ -244,7 +245,8 @@ footer{margin:56px 0 40px;padding-top:16px;border-top:1px solid var(--rule);font
     <div class="dtab"><table><thead><tr><th>Date</th><th>Day</th><th class="r">Births</th><th class="r">Model expected</th><th class="r">vs year mean</th></tr></thead><tbody id="d-body"></tbody></table></div>
     <p class="dfoot"><span id="d-count"></span><button type="button" class="dbtn" id="d-more">Show more</button></p>
   </div>
-  <p class="sub" style="margin-top:18px">There are only 14 distinct calendars, one for each day of the week a year can start on, in common and leap years. From 1901 to 2099, where every fourth year is a leap year, they repeat in the same order every 28 years. In each cycle the common year calendars are used three times each and the leap year calendars once each, and every date falls on each day of the week exactly four times. The pattern breaks at century years, which are leap years only when divisible by 400, so 1900 and 2100 have no February 29 while 2000 does. The 15 years from 2000 to 2014 cover only part of a cycle and use 11 of the 14 calendars, so dates other than February 29 fell on a weekend unequal numbers of times (3, 4 or 5). Since fewer births occur on weekends, each extra weekend lowers a date's average by about 2%, so raw counts by date depend partly on the arbitrary start and end of the series rather than on the date itself. This is one reason a model is needed. It separates the effect of a date from the day of the week it happened to fall on.</p>
+  <h3 class="noteh">Calendar fine print</h3>
+  <p class="sub" style="margin-top:8px">There are only 14 distinct calendars, one for each day of the week a year can start on, in common and leap years. From 1901 to 2099, where every fourth year is a leap year, they repeat in the same order every 28 years. In each cycle the common year calendars are used three times each and the leap year calendars once each, and every date falls on each day of the week exactly four times. The pattern breaks at century years, which are leap years only when divisible by 400, so 1900 and 2100 have no February 29 while 2000 does. The 15 years from 2000 to 2014 cover only part of a cycle and use 11 of the 14 calendars, so dates other than February 29 fell on a weekend unequal numbers of times (3, 4 or 5). Since fewer births occur on weekends, each extra weekend lowers a date's average by about 2%, so raw counts by date depend partly on the arbitrary start and end of the series rather than on the date itself. This is one reason a model is needed. It separates the effect of a date from the day of the week it happened to fall on.</p>
 </section>
 
 <section>
@@ -262,7 +264,7 @@ footer{margin:56px 0 40px;padding-top:16px;border-top:1px solid var(--rule);font
     <div class="card rcard">
       <div class="rtog"><button type="button" class="tog" id="r-log" role="switch" aria-checked="false"><span class="trk"></span>Log scale</button><button type="button" class="tog" id="r-abs" role="switch" aria-checked="false"><span class="trk"></span>Absolute value</button></div>
       <div id="g-resid"></div><div class="tip" id="rtip" hidden></div>
-      <div class="keys"><span><i class="sw" style="background:var(--ink2);opacity:.55;height:9px;width:12px"></i>days</span><span><i class="sw" style="background:var(--amber)"></i>normal curve with the same SD</span><span><i class="sw rdot" style="background:var(--pink)"></i><i class="sw rdot" style="background:var(--blue);margin-left:-12px"></i>dates with repeated digits</span></div>
+      <div class="keys"><span><i class="sw" style="background:var(--ink2);opacity:.55;height:9px;width:12px"></i>all days</span><span><i class="sw" style="background:var(--amber)"></i>normal density with the same SD</span><span><i class="sw rdot" style="background:var(--pink)"></i><i class="sw rdot" style="background:var(--blue)"></i>dates with repeated digits</span></div>
       <p class="rnote" id="r-tail"></p>
     </div>
     <div class="card"><h3>Dates with repeated digits</h3><p>Each date compared with the model, and its rank among all 5,479 days by absolute size of deviation.</p>
@@ -276,7 +278,7 @@ footer{margin:56px 0 40px;padding-top:16px;border-top:1px solid var(--rule);font
   <p class="sub" id="six-sub"></p>
   <div class="six">
     <div class="card"><h3>The week of June 6, 2006</h3><p>Births above or below the model on each day.</p><div id="g-six"></div></div>
-    <div class="card"><ol class="six-steps" id="six-steps"></ol><p class="six-end tipwrap" id="six-end"></p><p class="six-math" id="six-math"></p></div>
+    <div class="card"><ol class="six-steps" id="six-steps"></ol><p class="six-end tipwrap" id="six-end"></p></div>
   </div>
 </section>
 
@@ -346,6 +348,9 @@ function prep(E) {
   return { E, n, nY, slotMean, b, y, rel, slow, fast, week, season, special, yi, sl, wd, al, dom, mon, steps, scales, bySlot, byAli, weekBy, seasonBy: se };
 }
 const P = prep(DATA.e00), PERIOD = P.E.years[0] + " to " + P.E.years[P.nY - 1];
+// the overall daily average, which the page compares against in several places; each mention opens a note giving it
+const AVG = Math.round(P.E.total / P.n);
+const avgTerm = (txt) => '<span class="hv" tabindex="0">' + txt + '<span class="hvn" role="tooltip">' + fmtN(AVG) + " births per day</span></span>";
 // typical size of a day's departure from the period average before anything is removed, the counterpart of the residual figure at the last step
 const SD0 = (() => { let s = 0, ss = 0; for (let i = 0; i < P.n; i++) s += P.b[i]; const m = s / P.n; for (let i = 0; i < P.n; i++) ss += (P.b[i] / m - 1) ** 2; return Math.round(100 * Math.sqrt(ss / P.n)); })();
 // the data behind each component, the observations minus every other component, averaged for display
@@ -386,6 +391,8 @@ function yearCol(r, nY) { // light teal to ink, one color per year
 
 // ---------- the fabric: every day as a cell, one row per year; the steps peel the pieces off ----------
 // dates like 11/11/11, with each one's deviation from the model and its rank among all days by size, ranked in percent as shown
+// how far births on Friday the 13th fall below the model, on average
+const F13 = (() => { const e = P.steps[5]; let t = 0, c = 0; for (let i = 0; i < P.n; i++) if (P.wd[i] === 4 && P.dom[i] === 13) { t += e[i]; c++; } return Math.round(-pc(t / c)); })();
 const RD = (() => {
   // every day's observed births against the model's expected, in percent, with its rank by size among all days
   const e = P.steps[5], n = P.n, pv = Array.from({ length: n }, (_, i) => 100 * (Math.exp(e[i]) - 1)), ord = Array.from({ length: n }, (_, i) => i).sort((a, b) => Math.abs(pv[b]) - Math.abs(pv[a])), rank = new Int32Array(n);
@@ -394,17 +401,20 @@ const RD = (() => {
   for (let i = 0; i < n; i++) { const yy = P.E.years[P.yi[i]] % 100, m = P.mon[i] + 1; if (yy >= 1 && yy <= 12 && m === yy && P.dom[i] === yy) rows.push({ i, name: m + "/" + yy + "/" + String(yy).padStart(2, "0"), v: pv[i], rank: rank[i] }); }
   rows.sort((a, b) => a.rank - b.rank);
   const k = rows.filter((r) => r.rank <= 12).length, W = ["None", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"];
-  return { say: W[k], pv, rank, rows };
+  return { say: W[k], k, pv, rank, rows };
 })();
 // fuller names for the heading shown on a phone, where there is room for them
 const LONG = ["Daily births", "Align weekdays", "Remove day of week effect", "Remove seasonal effect", "Remove long term trend", "Remove day of year effect"];
 const STEPS = [
-  ["Daily births", (E) => "Before any modeling, daily births vary by approximately ±" + SD0 + "% around the " + PERIOD + " average."],
-  ["Align weekdays", (E) => "Rows are shifted so that weekdays align. Saturdays and Sundays now appear as blue columns."],
-  ["Remove day of week", (E) => "The day of week effect is modeled and removed. It accounts for most of the day to day variation in births, since inductions and C-sections are mostly scheduled on weekdays. Weekdays no longer matter for what remains, so the rows return to calendar order. Holidays with fixed dates (New Year's Day, July 4, Christmas) form vertical lines. Holidays defined by weekday (Memorial Day, Labor Day, Thanksgiving) shift from year to year."],
-  ["Remove season", (E) => "After removal of the seasonal component, the late summer excess is no longer visible."],
-  ["Remove trend", (E) => "Removal of the long term trend evens out the differences between years."],
-  ["Remove day of year", (E) => "After removal of the effects of specific dates, the residual variation is approximately " + sgn(pc(E.sdEps), 1).replace("+", "±") + " per day, and what remains <a class=\"rdl\" href=\"#resid\">looks more like noise</a>. " + RD.say + ' of the 12 largest remaining deviations fall on <a class="rdl" href="#resid">dates with repeated digits</a>, such as 11/11/11 and 6/6/06.'],
+  ["Daily births", (E) => "Before any modeling, daily births vary by approximately ±" + SD0 + "% around the " + avgTerm(PERIOD + " average") + "."],
+  ["Align weekdays", (E) => "We shift the rows so that weekdays align. Like clockwork, Saturdays and Sundays appear as blue columns."],
+  ["Remove day of week", (E) => "The day of week effect is modeled and removed. It accounts for most of the day to day variation in births, since inductions and C-sections are mostly scheduled on weekdays." +
+    '<span class="para">As the weekday effect has been removed, we can return rows to calendar alignment.</span>' +
+    "<span class=\"para\">Note now we can see holidays with fixed dates (New Year's Day, July 4, Christmas) form vertical lines, and we can see holidays defined by weekday (Memorial Day, Labor Day, Thanksgiving) cycle through their possible dates.</span>"],
+  ["Remove season", (E) => "After removing the seasonal component, the late summer excess is no longer visible. And now we can more clearly see the years when births rose, followed by the years when births fell."],
+  ["Remove trend", (E) => "After removing the long term trend, the years (rows) look much like one another, apart from noise. The effects of specific calendar dates are still clearly visible."],
+  ["Remove day of year", (E) => "After removing the effects of specific dates, daily births vary by approximately " + sgn(pc(E.sdEps), 1).replace("+", "±") + " around the model's expected count. What remains <a class=\"rdl\" href=\"#resid\">looks more like noise</a>, but there is still some unmodeled structure." +
+    '<span class="para">For example, ' + RD.k + ' of the largest 12 remaining deviations fall on <a class="rdl" href="#resid">dates with repeated digits</a>, such as <a class="rdl" href="https://www.cbsnews.com/sanfrancisco/news/san-jose-baby-born-at-1111-on-111111/" target="_blank" rel="noopener">11/11/11</a> and 6/6/06. The model also does not account for Friday the 13th, when births run about ' + F13 + "% below expected.</span>"],
 ];
 const H = { step: 0, p: 0, s: 0, cur: null, anim: 0, geo: null };
 $("steps").innerHTML = STEPS.map((s, k) => (k === 2 ? '<span class="sbrk" aria-hidden="true"></span><span class="sdiv" aria-hidden="true"></span>' : "") + '<button type="button" data-k="' + k + '" aria-label="Step ' + (k + 1) + ', ' + LONG[k] + '"><i>' + (k + 1) + '</i><span class="sl">' + s[0] + "</span></button>").join("") + '<span class="sbrw" aria-hidden="true"></span>';
@@ -515,7 +525,7 @@ function setStep(k, instant) {
   showRemoved(k);
   const ex = [0, 0, 1, 2, 3, 4][k], e = P.E.explained[ex] * 100;
   $("fab-bar").style.width = e.toFixed(1) + "%"; $("fab-pct").textContent = (e < 0.05 ? "0" : e.toFixed(e < 10 ? 1 : 0)) + "%";
-  $("leg-t").textContent = k < 2 ? "Births vs the " + PERIOD + " average" : "What remains";
+  $("leg-t").innerHTML = k < 2 ? "Births vs the " + avgTerm(PERIOD + " average") : "What remains";
   $("leg-lo").textContent = sgn(-s1 * 100);
   $("leg-hi").textContent = sgn(s1 * 100);
   if (instant || RM) { H.cur = to.slice(); H.s = s1; H.p = p1; drawFab(); return; }
@@ -692,6 +702,7 @@ function drawYear() {
   const x = sc(0, 365, f.x0, f.x1), y = sc(lo, hi, f.y0, f.y1);
   let s = yGrid(f, y, lo, hi, 5, pctLab);
   MON.forEach((m, k) => { s += '<text x="' + x(CUM[k] + 15).toFixed(1) + '" y="' + (f.y0 + 17) + '" text-anchor="middle">' + (f.W < 420 ? m[0] : m) + "</text>"; });
+  CUM.concat(366).forEach((c) => { const X = x(c - 0.5).toFixed(1); s += '<line x1="' + X + '" x2="' + X + '" y1="' + f.y0 + '" y2="' + (f.y0 + 5) + '" stroke="' + COL.muted + '" stroke-width="1"/>'; });   // ticks where each month begins, labels sit between them
   s += yearLines(f, series, x, y);
   if (SHOW.on) s += PR.season.map((v, k) => dot(x(k), y(v), 1.8, COL.ink, 0.5)).join("");
   el.innerHTML = svgWrap(f, s, "Seasonal effect, one line per year");
@@ -706,6 +717,7 @@ function drawCal() {
   const x = sc(0, 365, f.x0, f.x1), y = sc(lo, hi, f.y0, f.y1), bw = Math.max(1, (f.x1 - f.x0) / 366 - 0.3);
   let s = yGrid(f, y, lo, hi, 5, pctLab);
   MON.forEach((m, k) => { s += '<text x="' + x(CUM[k] + 15).toFixed(1) + '" y="' + (f.y0 + 17) + '" text-anchor="middle">' + (f.W < 420 ? m[0] : m) + "</text>"; });
+  CUM.concat(366).forEach((c) => { const X = x(c - 0.5).toFixed(1); s += '<line x1="' + X + '" x2="' + X + '" y1="' + f.y0 + '" y2="' + (f.y0 + 5) + '" stroke="' + COL.muted + '" stroke-width="1"/>'; });   // ticks where each month begins, labels sit between them
   D.forEach((v, k) => { const p = pc(v), y0 = y(0), y1 = y(p); s += '<rect x="' + (x(k) - bw / 2).toFixed(1) + '" y="' + Math.min(y0, y1).toFixed(1) + '" width="' + bw.toFixed(2) + '" height="' + Math.max(0.6, Math.abs(y1 - y0)).toFixed(1) + '" fill="' + (p < 0 ? COL.blue : COL.pink) + '"/>'; });
   if (SHOW.on) s += PR.date.map((v, k) => (isNaN(v) ? "" : dot(x(k), y(v), 1.6, COL.ink, 0.45))).join("");
   // drawn as dashed stems from zero with open circles, so they read like the other dates
@@ -715,19 +727,20 @@ function drawCal() {
   s += T(x(0) + 7, y(at(0)) + 4, "start", "New Year");
   s += narrow ? T(x(185) + 4, y(at(185) / 2) + 4, "start", "July 4") : T(x(185) + 7, y(at(185)) + 4, "start", "July 4");   // on a phone, halfway down its bar, clear of the circles
   const names = narrow ? ["M", "L", "T"] : ["Memorial Day", "Labor Day", "Thanksgiving"];   // a phone has room for initials, spelled out in the key
+  if (narrow) s += T(x(304), y(at(304)) + 13, "middle", "H");   // Halloween, spelled out in the key
   [0, 1, 2].forEach((i) => { const [k, p, , r] = fl[i]; s += i === 2 && !narrow ? T(x(k) + 16, y(p) + r + 13, "end", names[i]) : T(x(k), y(p) + r + 13, "middle", names[i]); });   // Thanksgiving leans left, clear of the Christmas bar
   if (!narrow) {   // a short leader ties each of these small bars to its name
     const lead = (k, ya, yb) => '<line x1="' + x(k).toFixed(1) + '" x2="' + x(k).toFixed(1) + '" y1="' + ya.toFixed(1) + '" y2="' + yb.toFixed(1) + '" stroke="' + COL.muted + '" stroke-width=".8"/>';
     const v = y(at(44)), a1 = y(at(91));
-    s += lead(44, v - 2, v - 16) + T(x(44), v - 20, "middle", "Valentine's") + T(x(91) + 2, a1 + 16, "middle", "April 1");
-    // Leap Day hangs a little lower, on a leader, so it clears both New Year and April Fools'
-    const l = y(at(59)); s += lead(59, l + 2, l + 18) + T(x(59) + 3, l + 30, "end", "Leap Day");
+    s += lead(44, v - 2, v - 16) + T(x(44), v - 20, "middle", "Valentine's") + T(x(91) + 5, a1 + 2, "start", "April 1");
+    // Leap Day sits centered under its bar
+    const l = y(at(59)); s += T(x(59), l + 16, "middle", "Leap Day");
   }
   // the dates at the end of December are labeled in the right margin, each at its own height
   const M = [[362, "Dec 28"], [358, "Christmas Eve"], [359, "Christmas"]].filter((m) => !narrow || m[0] !== 358).map(([k, nm]) => ({ k, nm, y0: y(at(k)), y: y(at(k)) })).sort((a, b) => a.y - b.y);
   for (let i = 1; i < M.length; i++) if (M[i].y - M[i - 1].y < 14) M[i].y = M[i - 1].y + 14;
   M.forEach((m) => { s += '<path d="M' + (x(m.k) + 2).toFixed(1) + "," + m.y0.toFixed(1) + "L" + (f.x1 + 4).toFixed(1) + "," + m.y.toFixed(1) + '" fill="none" stroke="' + COL.muted + '" stroke-width=".8"/>' + T(f.x1 + 7, m.y + 4, "start", m.nm); });
-  el.innerHTML = svgWrap(f, s, "Effect of each calendar date on weekday births") + '<p class="ckey">Open circles are holidays without a fixed date, plotted at a representative date.' + (narrow ? " M, Memorial Day. L, Labor Day. T, Thanksgiving." : "") + "</p>";
+  el.innerHTML = svgWrap(f, s, "Effect of each calendar date on weekday births") + '<p class="ckey">Open circles are holidays without a fixed date, plotted at a representative date.' + (narrow ? " M, Memorial Day. L, Labor Day. H, Halloween. T, Thanksgiving." : "") + "</p>";
 }
 // one year can be lit in the season and day of week panels, by hovering its line or with the slider under either panel
 const YS = { r: -1 };
@@ -802,7 +815,7 @@ $("b-m").innerHTML = MONL.map((m, k) => '<option value="' + k + '">' + m + "</op
 function fillDays() { const len = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][bd.m]; bd.d = Math.min(bd.d, len); $("b-d").innerHTML = Array.from({ length: len }, (_, k) => '<option value="' + (k + 1) + '">' + (k + 1) + "</option>").join(""); $("b-m").value = bd.m; $("b-d").value = bd.d; }
 function drawBday() {
   const s = CUM[bd.m] + bd.d - 1, E = P.E, p = (E.pop[s] - 1) * 100;
-  $("b-big").innerHTML = sgn(p) + "<small>births on " + slotLong(s) + " relative to the mean day</small>";
+  $("b-big").innerHTML = sgn(p) + "<small>births on " + slotLong(s) + " relative to the " + avgTerm("mean day") + "</small>";
   $("b-vs").innerHTML = "<div>Rank among 366 dates<b>" + RANK[s] + "</b></div><div>Mean births on this date<b>" + fmtN(P.slotMean[s]) + "</b>" + (s === 59 ? "Leap years only" : "Per year") + "</div>";
   $("b-quip").textContent = dateNote(s);
   const el = $("g-bday"), f = frame(el, 0.5, [12, 6, 26, 40]), lo = Math.floor(Math.min(...E.pop.map((v) => (v - 1) * 100)) / 10) * 10, hi = Math.ceil(Math.max(...E.pop.map((v) => (v - 1) * 100)) / 5) * 5;
@@ -824,19 +837,18 @@ function sixText() {
   for (let i = 0; i < P.n; i++) if (P.E.years[P.yi[i]] === 2006 && P.mon[i] === 5 && P.dom[i] === 6) { S.expected = Math.round(P.b[i] / Math.exp(P.steps[5][i])); break; }
   const pct = Math.abs(S.week[3][2]).toFixed(1), short = S.expected - S.actual, sdB = Math.round(S.expected * DATA.e00.sdEps), r100 = (v) => fmtN(Math.round(v / 100) * 100), r10 = (v) => fmtN(Math.round(v / 10) * 10);
   const near = S.week.filter((w, k) => k !== 3).reduce((a, w) => a + w[3], 0), sched = Math.round(S.sched * 100) / 100, sch = sched * S.expected;
-  $("six-sub").innerHTML = 'Tuesday, June 6, 2006, written 6/6/06, looks like 666, a number with a negative association in Western culture.<sup class="fn"><a href="https://en.wikipedia.org/wiki/Number_of_the_beast" target="_blank" rel="noopener" aria-label="About 666, on Wikipedia">1</a></sup> That day there were ' + pct + "% fewer births than the model expected. What can we back out from that? Were births rescheduled (if so, how many?) or can this be chalked up to chance?";
-  const sp = Math.round(sched * 100);
+  $("six-sub").innerHTML = 'Tuesday, June 6, 2006, written 6/6/06, looks like 666, a number that doesn\'t have the best <a class="xl" href="https://en.wikipedia.org/wiki/Number_of_the_beast" target="_blank" rel="noopener">reputation</a>. That day there were ' + pct + "% fewer births than the model expected. What can we back out from that? Were births rescheduled (if so, how many?) or can this be chalked up to chance?";
+  const sp = Math.round(sched * 100), unsch = S.expected - sch, still = S.actual - unsch;   // still: the scheduled births that still took place
   $("six-steps").innerHTML = [
-    ["The expected count.", "The model expected " + fmtN(S.expected) + " births that day. There were " + fmtN(S.actual) + ', <span class="sx" tabindex="0" aria-describedby="sxnote1">a shortfall of about ' + r10(short) + '</span>.<span class="sxnote" id="sxnote1" role="tooltip">The low count also pulled the model\'s expectation down a little. Refitting without this day gives a shortfall of about ' + r10(S.expectedLoo - S.actual) + '.</span>', "tipwrap"],
-    ["Compare with chance.", "An ordinary day usually differs from the model by about ±" + sdB + " births (1 SD). The 6/6/06 shortfall is more than " + Math.floor(short / sdB) + " times that (" + r10(short) + " ÷ " + sdB + " ≈ " + (short / sdB).toFixed(1) + ")."],
-    ["Where did the births go?", "Babies have to be born one day or another. The six surrounding days ran about " + r100(near) + " births above the model, mostly on Monday the 5th and Thursday the 8th."],
-    ["A share of whom?", "Only scheduled births can be moved, but the data do not count them separately. So we have to do our best: Hospitals schedule few inductions and C-sections on Sundays, and a typical Sunday has " + sp + "% fewer births than a typical Tuesday. If Sunday births are almost all unscheduled, and unscheduled births are spread evenly across the week, we would expect roughly " + r100(sch) + " births to have been scheduled that day (" + sched.toFixed(2) + " × " + fmtN(S.expected) + ")."],
-  ].map(([h, t, c]) => "<li" + (c ? ' class="' + c + '"' : "") + "><b>" + h + "</b> " + t + "</li>").join("");
-  $("six-end").innerHTML = 'We can estimate that <span class="sx" tabindex="0" aria-describedby="sxnote">about ' + r100(short) + " births were moved</span> off 6/6/06, about a third of the estimated " + r100(sch) + " scheduled deliveries that would otherwise have occurred that day." +
-    '<span class="sxnote" id="sxnote" role="tooltip">This is a net estimate. If some births were moved onto the date, more than this were moved away.</span>';
-  const unsch = S.expected - sch, still = S.actual - unsch;   // the scheduled births that still took place
-  const nw = (s) => '<span class="nw">' + s + "</span>";
-  $("six-math").innerHTML = '<span>Expected</span><span class="n">' + fmtN(S.expected) + "</span><span>" + nw("≈ " + r100(sch) + " scheduled") + " " + nw("+ " + r100(unsch) + " unscheduled") + '</span><span>Actual</span><span class="n">' + fmtN(S.actual) + "</span><span>" + nw("≈ " + r100(still) + " scheduled") + " " + nw("+ " + r100(unsch) + " unscheduled") + "</span>";
+    ["The expected count.", "The model estimates " + fmtN(S.expected) + " births that day. There were " + fmtN(S.actual) + ', <span class="sx" tabindex="0" aria-describedby="sxnote1">' + fmtN(short) + ' fewer than expected</span>.<span class="sxnote" id="sxnote1" role="tooltip">The low count also pulled the model\'s expectation down a little. Refitting without this day gives a shortfall of about ' + r10(S.expectedLoo - S.actual) + '.</span>', "tipwrap"],
+    ["Compare with chance.", "An ordinary day usually differs from the model by about ±" + sdB + " births (1 SD). The 6/6/06 shortfall is more than " + Math.floor(short / sdB) + " times that <span class=\"nwr\">(" + fmtN(short) + " ÷ " + sdB + " ≈ " + (short / sdB).toFixed(1) + ")</span>."],
+    ["Where did the births go?", "Babies have to be born one day or another. The six surrounding days ran about " + r100(near) + " births above the model."],
+    ["A share of whom?", "Only scheduled births can be moved, but the data do not count them separately. So we have to do our best."],
+    ["How many were scheduled?", "Hospitals schedule few inductions and C-sections on Sundays, and a typical Sunday has " + sp + "% fewer births than a typical Tuesday. If Sunday births are almost all unscheduled, and unscheduled births are spread evenly across the week, we would expect roughly " + r100(sch) + " births to have been scheduled <span class=\"nwr\">(" + sched.toFixed(2) + " × " + fmtN(S.expected) + ")</span>."],
+    ["How many were moved?", "The other " + r100(unsch) + " expected births were unscheduled <span class=\"nwr\">(" + fmtN(S.expected) + " − " + r100(sch) + ")</span>. If they were unaffected by the date, about " + r100(still) + " scheduled births still took place <span class=\"nwr\">(" + fmtN(S.actual) + " − " + r100(unsch) + ")</span>, so about " + r100(short) + " were moved <span class=\"nwr\">(" + r100(sch) + " − " + r100(still) + ")</span>."],
+  ].map(([, t, c]) => "<li" + (c ? ' class="' + c + '"' : "") + ">" + t + "</li>").join("");   // the short names are kept in the source only
+  const one = Math.round(sch / short);   // "1 in N" of the scheduled deliveries
+  $("six-end").textContent = "We estimate that, on net, about " + r100(short) + " births were moved off 6/6/06. Of the families who would have scheduled a delivery that day, roughly 1 in " + one + " picked another date.";
 }
 function drawSix() {
   const S = DATA.e00.sixsix; if (!S) return;
@@ -856,6 +868,16 @@ function drawSix() {
   el.innerHTML = svgWrap(f, s, "Births above or below the model on each day of the week of June 6, 2006");
 }
 
+{ // notes on dotted terms like the overall average: open on hover, focus or tap, and kept inside the screen
+  const place = (t) => { const n = t.querySelector(".hvn"); if (!n) return; n.style.left = "0px"; const r = n.getBoundingClientRect(), vw = document.documentElement.clientWidth; let dx = 0; if (r.right > vw - 12) dx = vw - 12 - r.right; if (r.left + dx < 12) dx = 12 - r.left; n.style.left = dx + "px"; };
+  const open = (t) => { document.querySelectorAll(".hv.open").forEach((o) => { if (o !== t) o.classList.remove("open"); }); t.classList.add("open"); place(t); };
+  document.addEventListener("pointerover", (e) => { if (e.pointerType !== "mouse") return; const t = e.target.closest && e.target.closest(".hv"); if (t) open(t); });
+  document.addEventListener("pointerout", (e) => { if (e.pointerType !== "mouse") return; const t = e.target.closest && e.target.closest(".hv"); if (t && !t.contains(e.relatedTarget)) t.classList.remove("open"); });
+  document.addEventListener("pointerup", (e) => { if (e.pointerType === "mouse") return; const t = e.target.closest && e.target.closest(".hv"); if (t) { if (t.classList.contains("open")) t.classList.remove("open"); else open(t); } else document.querySelectorAll(".hv.open").forEach((o) => o.classList.remove("open")); });
+  document.addEventListener("focusin", (e) => { const t = e.target.closest && e.target.closest(".hv"); if (t) open(t); });
+  document.addEventListener("focusout", (e) => { const t = e.target.closest && e.target.closest(".hv"); if (t) t.classList.remove("open"); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") document.querySelectorAll(".hv.open").forEach((o) => o.classList.remove("open")); }); }
+
 // ---------- births per day as a histogram, ignoring time; split, weekdays and weekends separate into two humps ----------
 const DS = { split: false };
 function kde(vals, grid) {
@@ -865,7 +887,7 @@ function kde(vals, grid) {
 }
 let DK = null;
 function drawDens() {
-  const el = $("g-dens"), narrow = (el.clientWidth || 500) < 520, f = frame(el, narrow ? 0.62 : 0.3, [14, 10, 42, narrow ? 40 : 48]), BW = 200, n = P.n;
+  const el = $("g-dens"), narrow = (el.clientWidth || 500) < 520, f = frame(el, narrow ? 0.62 : 0.3, [14, 10, 48, narrow ? 40 : 48]), BW = 200, n = P.n;
   const all = Array.from(P.b), wk = all.filter((_, i) => P.wd[i] < 5), we = all.filter((_, i) => P.wd[i] >= 5);
   const lo = Math.floor(Math.min(...all) / 1000) * 1000, hi = Math.ceil(Math.max(...all) / 1000) * 1000, nb = (hi - lo) / BW;
   const ca = new Array(nb).fill(0), cw = new Array(nb).fill(0);
@@ -887,15 +909,30 @@ function drawDens() {
     s += curve(DK.all, n, COL.ink, 1.2).replace("<path ", '<path stroke-dasharray="3 3" ');
     s += curve(DK.we, we.length, COL.blue, 2.2) + curve(DK.wk, wk.length, COL.pink, 2.2);
     const peak = (dens, m) => { let b = 0; dens.forEach((v, k) => { if (v > dens[b]) b = k; }); return [x(DK.grid[b]), y(dens[b] * m * BW)]; };
-    const [ax, ay] = peak(DK.we, we.length), [bx, by] = peak(DK.wk, wk.length);
+    const [ax, ay] = peak(DK.we, we.length);
     s += '<text class="lab" x="' + Math.max(ax - 8, f.x0 + 66).toFixed(1) + '" y="' + (ay - 8).toFixed(1) + '" text-anchor="end" style="fill:' + COL.blue + '">Weekends</text>';
-    s += '<text class="lab" x="' + Math.min(bx + 8, f.x1 - 66).toFixed(1) + '" y="' + (by - 8).toFixed(1) + '" text-anchor="start" style="fill:' + COL.pink + '">Weekdays</text>';
+    // the weekday label sits partway down the right side of its hump, clear of the mean and median labels at the top
+    let kp = 0; DK.wk.forEach((v, k) => { if (v > DK.wk[kp]) kp = k; }); let kr = kp; while (kr < DK.grid.length - 1 && DK.wk[kr] > 0.55 * DK.wk[kp]) kr++;
+    s += '<text class="lab" x="' + Math.min(x(DK.grid[kr]) + 8, f.x1 - 66).toFixed(1) + '" y="' + (y(DK.wk[kr] * wk.length * BW) + 4).toFixed(1) + '" text-anchor="start" style="fill:' + COL.pink + '">Weekdays</text>';
   }
   s += '<line x1="' + f.x0 + '" x2="' + f.x1 + '" y1="' + f.y0 + '" y2="' + f.y0 + '" stroke="' + COL.ink2 + '"/>';
-  for (let t = Math.ceil(lo / 2000) * 2000; t <= hi; t += narrow ? 4000 : 2000) s += '<text x="' + x(t).toFixed(1) + '" y="' + (f.y0 + 17) + '" text-anchor="middle">' + fmtN(t) + "</text>";
-  s += '<text x="' + ((f.x0 + f.x1) / 2).toFixed(1) + '" y="' + (f.y0 + 35) + '" text-anchor="middle" style="fill:' + COL.ink2 + '">Births per day</text>';
-  el.innerHTML = svgWrap(f, s, "Histogram of births per day for all days, with a smoothed density" + (DS.split ? ", split into weekdays and weekends" : ""));
+  // the mean lands in the valley between the humps; the median sits in the weekday hump
+  const srt = all.slice().sort((a, b) => a - b), med = Math.round((srt[(n - 1) >> 1] + srt[n >> 1]) / 2), mean = AVG;
+  // small triangles on the axis, filled for the mean and open for the median; hover or tap for the values
+  const tri = (cx, fill) => '<path d="M' + cx.toFixed(1) + "," + (f.y0 + 1) + "l5.5,9h-11z" + '" fill="' + fill + '" stroke="' + COL.ink + '" stroke-width="1.3" stroke-linejoin="round"/>';
+  [["mean", mean, COL.ink], ["median", med, COL.panel]].forEach(([k, v, fill]) => { const X = x(v); s += '<g class="mm" data-k="' + k + '">' + tri(X, fill) + '<circle cx="' + X.toFixed(1) + '" cy="' + (f.y0 + 6) + '" r="11" fill="transparent"/></g>'; });
+  DS.mm = { mean, med };
+  for (let t = Math.ceil(lo / 2000) * 2000; t <= hi; t += narrow ? 4000 : 2000) s += '<text x="' + x(t).toFixed(1) + '" y="' + (f.y0 + 21) + '" text-anchor="middle">' + fmtN(t) + "</text>";
+  s += '<text x="' + ((f.x0 + f.x1) / 2).toFixed(1) + '" y="' + (f.y0 + 39) + '" text-anchor="middle" style="fill:' + COL.ink2 + '">Births per day</text>';
+  el.innerHTML = svgWrap(f, s, "Histogram of births per day for all days, with a smoothed density" + (DS.split ? ", split into weekdays and weekends" : "") + ". The mean is " + fmtN(mean) + " and the median " + fmtN(med) + ".");
 }
+{ // mean and median: hover or tap a triangle
+  const tip = $("dtip"), show = (g) => { const k = g.dataset.k, v = k === "mean" ? DS.mm.mean : DS.mm.med, r = g.getBoundingClientRect(), c = $("g-dens").closest(".dens").getBoundingClientRect();
+    tip.innerHTML = "<b>" + (k === "mean" ? "Mean" : "Median") + "</b> " + fmtN(v) + " births per day"; tip.hidden = false;
+    tip.style.left = clamp(r.left + r.width / 2 - c.left - tip.offsetWidth / 2, 0, c.width - tip.offsetWidth) + "px"; tip.style.top = r.top - c.top - tip.offsetHeight - 8 + "px"; };
+  $("g-dens").addEventListener("pointerover", (e) => { if (e.pointerType !== "mouse") return; const g = e.target.closest(".mm"); if (g) show(g); });
+  $("g-dens").addEventListener("pointerout", (e) => { if (e.pointerType === "mouse" && e.target.closest(".mm")) tip.hidden = true; });
+  document.addEventListener("pointerup", (e) => { if (e.pointerType === "mouse") return; const g = e.target.closest && e.target.closest("#g-dens .mm"); if (g) show(g); else tip.hidden = true; }); }
 $("dens-split").addEventListener("click", (e) => { DS.split = !DS.split; e.currentTarget.setAttribute("aria-checked", String(DS.split)); drawDens(); });
 
 // ---------- residuals: every day against the model, with a normal curve of the same SD ----------
@@ -936,7 +973,7 @@ function drawResid() {
   (ab ? [0, 5, 10, 15, 20] : [-20, -10, 0, 10, 20]).forEach((t) => { s += '<text x="' + x(t).toFixed(1) + '" y="' + (deep + 20) + '" text-anchor="middle">' + (t === 0 ? "0" : ab ? t + "%" : sgn(t, 0)) + "</text>"; });
   s += '<text x="' + ((f.x0 + f.x1) / 2).toFixed(1) + '" y="' + (deep + 38) + '" text-anchor="middle" style="fill:' + COL.ink2 + '">' + (ab ? "Distance from model expected" : "Observed vs model expected") + "</text>";
   const H = deep + 46;
-  el.innerHTML = '<svg viewBox="0 0 ' + f.W + " " + H + '" role="img" aria-label="Histogram of every day\'s observed births against the model\'s expected, in percent, with a normal curve of the same standard deviation">' + s + "</svg>";
+  el.innerHTML = '<svg viewBox="0 0 ' + f.W + " " + H + '" role="img" aria-label="Histogram of every day\'s observed births against the model\'s expected, in percent, with a normal density of the same standard deviation">' + s + "</svg>";
   RS.geo = { x, lo, lim, BW, cnt, ab, dens, W: f.W, x0: f.x0, x1: f.x1, y0: f.y0, y1: f.y1, dots: dots.map((q) => ({ k: q.k, x: q.x, y: q.y })) };
   document.querySelectorAll("#r-body tr").forEach((tr) => tr.classList.toggle("on", +tr.dataset.k === RS.hi));
 }
@@ -966,8 +1003,8 @@ $("r-body").innerHTML = RD.rows.map((r, k) => '<tr data-k="' + k + '"><td>' + r.
 $("r-body").addEventListener("pointerover", (e) => { const tr = e.target.closest("tr"); if (tr && RS.hi !== +tr.dataset.k) { RS.hi = +tr.dataset.k; drawResid(); } });
 $("r-body").addEventListener("pointerleave", () => { if (RS.hi >= 0) { RS.hi = -1; drawResid(); } });
 { const z = 4, beyond = RD.pv.filter((v) => Math.abs(v - RSD.m) > z * RSD.s).length, ex = RSD.n * (1 - erf(z / Math.SQRT2));
-  const pr = 100 * (1 - erf(z / Math.SQRT2));
-  $("r-tail").textContent = "Each day's count is a sum of many small chances. If the modeling were finished and the deviations were only noise, we would expect them to be approximately normal because of the central limit theorem. There are " + beyond + " days out of " + fmtN(RSD.n) + " more than " + z + " standard deviations (±" + (z * RSD.s).toFixed(1) + "%) away from model expected. Under a normal model this would happen " + Number(pr.toPrecision(1)) + "% of the time, or on about " + ex.toFixed(2) + " days."; }
+  const pz = 1 - erf(z / Math.SQRT2);
+  $("r-tail").innerHTML = "Each day's count adds up millions of potential births. If the modeling were finished and the deviations were only noise, we would expect them to be approximately normal because of the central limit theorem. There are " + beyond + " days out of " + fmtN(RSD.n) + " more than " + z + " standard deviations (±" + (z * RSD.s).toFixed(1) + "%) away from what the model expected for that date. Under a normal distribution with the same SD, we would expect <span class=\"hv\" tabindex=\"0\">" + (ex < 1 ? "fewer than one such day" : "about " + Math.round(ex) + " such days") + '<span class="hvn" role="tooltip">P(|Z| > ' + z + ") ≈ " + pz.toFixed(6) + "<br>" + fmtN(RSD.n) + " × " + pz.toFixed(6) + " ≈ " + ex.toFixed(2) + " days</span></span> out of " + fmtN(RSD.n) + "."; }
 
 // ---------- the data ----------
 const dYears = P.E.years, dState = { show: 200 };
@@ -1000,6 +1037,23 @@ drawData();
 // ---------- wiring ----------
 function drawPanels() { drawDrift(); drawWeek(); drawYear(); drawCal(); bindYears(); lightYear(YS.r); }
 $("lede-n").textContent = fmtN(DATA.e00.total);
+// a peek at the raw data, just the two columns, with a download
+{ const ds = (i) => { const yr = P.E.years[P.yi[i]]; return yr + "-" + String(P.mon[i] + 1).padStart(2, "0") + "-" + String(P.dom[i]).padStart(2, "0"); };
+  const row = (i) => "<tr><td>" + ds(i) + '</td><td class="r">' + fmtN(P.b[i]) + "</td></tr>";
+  $("peek-body").innerHTML = row(0) + row(1) + row(2) + '<tr class="gap"><td>…</td><td class="r">…</td></tr>' + row(P.n - 1);
+  $("peek-n").textContent = fmtN(P.n) + " rows";
+  const box = $("peekbox"), btn = $("peek"), set = (on) => { box.hidden = !on; btn.setAttribute("aria-expanded", String(on)); };
+  btn.addEventListener("click", () => set(box.hidden));
+  btn.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); set(box.hidden); } });
+  document.addEventListener("pointerdown", (e) => { if (!box.hidden && !e.target.closest("#peekbox, #peek")) set(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !box.hidden) { set(false); btn.focus(); } }); }
+$("raw-dl").addEventListener("click", (e) => {
+  e.preventDefault();
+  const lines = ["date,births"];
+  for (let i = 0; i < P.n; i++) { const yr = P.E.years[P.yi[i]]; lines.push(yr + "-" + String(P.mon[i] + 1).padStart(2, "0") + "-" + String(P.dom[i]).padStart(2, "0") + "," + P.b[i]); }
+  const url = URL.createObjectURL(new Blob([lines.join("\n") + "\n"], { type: "text/csv" })), a = document.createElement("a");
+  a.href = url; a.download = "us_births_2000_2014_raw.csv"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
 $("m-eps").textContent = pc(P.E.sdEps).toFixed(1) + "%";
 $("eqn-dt").innerHTML = "<b>Date</b> gives each calendar date its own effect, separately for weekdays and weekends, with small effects shrunk toward zero. Memorial Day, Labor Day, Thanksgiving and the days around them get their own effects, as do weekdays taken off around holidays near a weekend. So do the Sundays when clocks change for daylight saving time. The 23 hour day has about " + Math.abs(pc(P.E.beta.dst_spring)).toFixed(1) + "% fewer births and the 25 hour day about " + pc(P.E.beta.dst_fall).toFixed(1) + "% more.";
 { // the terms of the model's equation open their notes on tap as well as hover
