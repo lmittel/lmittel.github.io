@@ -55,6 +55,7 @@ h2{font-weight:800;font-size:clamp(30px,4.6vw,52px);line-height:.95;letter-spaci
 .steps button.done{border-color:var(--ink2)}
 .steps .sbrk{display:none}
 @media (min-width:861px) and (max-width:1150px){.steps{flex-wrap:wrap;overflow:visible;row-gap:24px}.steps .sbrk{display:block;flex-basis:100%;height:0}.steps .sdiv{display:none}}
+.dens{margin:26px 0 0}.denshead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 18px}.dcap{margin:0;font-size:15px;color:var(--ink2)}.denshead .tog{margin:0}#g-dens svg{display:block;width:100%;height:auto;-webkit-user-select:none;user-select:none}
 .seqwrap{position:relative;margin:30px 0 0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
 #cv-seq{cursor:crosshair;touch-action:pan-y}
 .xr{height:30px;margin-top:2px}
@@ -190,6 +191,7 @@ footer{margin:56px 0 40px;padding-top:16px;border-top:1px solid var(--rule);font
   <h1>When are<br>we born?</h1>
   <p class="lede">All <span id="lede-n">62,187,024</span> births in the United States from 2000 to 2014.</p>
   <div class="seqwrap"><canvas id="cv-seq" role="img" aria-label="Births per day from 2000 to 2014, one point per day"></canvas><div class="tip" id="stip" hidden></div><div class="xr" id="xr"><input type="range" id="xs" min="0" max="5478" step="1" value="0" aria-label="Choose a day"></div><p class="xrl" id="xrl"></p></div>
+  <div class="dens"><div class="denshead"><p class="dcap">The same 5,479 days, ignoring when they happened.</p><button type="button" class="tog" id="dens-split" role="switch" aria-checked="false"><span class="trk"></span>Split weekdays and weekends</button></div><div id="g-dens"></div></div>
 </header>
 
 <section aria-label="Every day, one row per year">
@@ -854,6 +856,48 @@ function drawSix() {
   el.innerHTML = svgWrap(f, s, "Births above or below the model on each day of the week of June 6, 2006");
 }
 
+// ---------- births per day as a histogram, ignoring time; split, weekdays and weekends separate into two humps ----------
+const DS = { split: false };
+function kde(vals, grid) {
+  const n = vals.length, m = vals.reduce((a, b) => a + b, 0) / n, sd = Math.sqrt(vals.reduce((a, b) => a + (b - m) * (b - m), 0) / n), q = vals.slice().sort((a, b) => a - b);
+  const h = 0.9 * Math.min(sd, (q[Math.floor(0.75 * n)] - q[Math.floor(0.25 * n)]) / 1.34) * Math.pow(n, -0.2);   // Silverman's rule
+  return grid.map((u) => { let t = 0; for (const v of vals) { const z = (u - v) / h; t += Math.exp(-0.5 * z * z); } return t / (n * h * Math.sqrt(2 * Math.PI)); });
+}
+let DK = null;
+function drawDens() {
+  const el = $("g-dens"), narrow = (el.clientWidth || 500) < 520, f = frame(el, narrow ? 0.62 : 0.3, [14, 10, 42, narrow ? 40 : 48]), BW = 200, n = P.n;
+  const all = Array.from(P.b), wk = all.filter((_, i) => P.wd[i] < 5), we = all.filter((_, i) => P.wd[i] >= 5);
+  const lo = Math.floor(Math.min(...all) / 1000) * 1000, hi = Math.ceil(Math.max(...all) / 1000) * 1000, nb = (hi - lo) / BW;
+  const ca = new Array(nb).fill(0), cw = new Array(nb).fill(0);
+  all.forEach((v, i) => { const k = clamp(Math.floor((v - lo) / BW), 0, nb - 1); ca[k]++; if (P.wd[i] >= 5) cw[k]++; });
+  if (!DK) { const grid = []; for (let u = lo; u <= hi; u += (hi - lo) / 240) grid.push(u); DK = { grid, all: kde(all, grid), wk: kde(wk, grid), we: kde(we, grid) }; }
+  const x = sc(lo, hi, f.x0, f.x1), top = Math.max(...ca) * 1.08, y = sc(0, top, f.y0, f.y1);
+  let s = yGrid(f, y, 0, top, 4, (v) => fmtN(v));
+  s += '<text x="' + (f.x0 - (narrow ? 32 : 40)) + '" y="' + (f.y1 - 2) + '" text-anchor="start">Days</text>';
+  ca.forEach((c, k) => {
+    if (!c) return; const x0 = x(lo + k * BW) + 0.4, w = Math.max(0.6, x(BW) - x(0) - 0.8);
+    if (!DS.split) { s += '<rect x="' + x0.toFixed(1) + '" y="' + y(c).toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + (f.y0 - y(c)).toFixed(1) + '" fill="' + COL.ink2 + '" fill-opacity=".4"/>'; return; }
+    const e = cw[k], d = c - e;   // weekend days at the bottom, weekdays stacked on top
+    if (e) s += '<rect x="' + x0.toFixed(1) + '" y="' + y(e).toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + (f.y0 - y(e)).toFixed(1) + '" fill="' + COL.blue + '" fill-opacity=".35"/>';
+    if (d) s += '<rect x="' + x0.toFixed(1) + '" y="' + y(c).toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + (y(e) - y(c)).toFixed(1) + '" fill="' + COL.pink + '" fill-opacity=".3"/>';
+  });
+  const curve = (dens, m, col, wdt) => '<path d="' + path(DK.grid.map((u, k) => [x(u), y(dens[k] * m * BW)])) + '" fill="none" stroke="' + col + '" stroke-width="' + wdt + '" stroke-linejoin="round"/>';
+  if (!DS.split) s += curve(DK.all, n, COL.ink, 2.2);
+  else {
+    s += curve(DK.all, n, COL.ink, 1.2).replace("<path ", '<path stroke-dasharray="3 3" ');
+    s += curve(DK.we, we.length, COL.blue, 2.2) + curve(DK.wk, wk.length, COL.pink, 2.2);
+    const peak = (dens, m) => { let b = 0; dens.forEach((v, k) => { if (v > dens[b]) b = k; }); return [x(DK.grid[b]), y(dens[b] * m * BW)]; };
+    const [ax, ay] = peak(DK.we, we.length), [bx, by] = peak(DK.wk, wk.length);
+    s += '<text class="lab" x="' + Math.max(ax - 8, f.x0 + 66).toFixed(1) + '" y="' + (ay - 8).toFixed(1) + '" text-anchor="end" style="fill:' + COL.blue + '">Weekends</text>';
+    s += '<text class="lab" x="' + Math.min(bx + 8, f.x1 - 66).toFixed(1) + '" y="' + (by - 8).toFixed(1) + '" text-anchor="start" style="fill:' + COL.pink + '">Weekdays</text>';
+  }
+  s += '<line x1="' + f.x0 + '" x2="' + f.x1 + '" y1="' + f.y0 + '" y2="' + f.y0 + '" stroke="' + COL.ink2 + '"/>';
+  for (let t = Math.ceil(lo / 2000) * 2000; t <= hi; t += narrow ? 4000 : 2000) s += '<text x="' + x(t).toFixed(1) + '" y="' + (f.y0 + 17) + '" text-anchor="middle">' + fmtN(t) + "</text>";
+  s += '<text x="' + ((f.x0 + f.x1) / 2).toFixed(1) + '" y="' + (f.y0 + 35) + '" text-anchor="middle" style="fill:' + COL.ink2 + '">Births per day</text>';
+  el.innerHTML = svgWrap(f, s, "Histogram of births per day for all days, with a smoothed density" + (DS.split ? ", split into weekdays and weekends" : ""));
+}
+$("dens-split").addEventListener("click", (e) => { DS.split = !DS.split; e.currentTarget.setAttribute("aria-checked", String(DS.split)); drawDens(); });
+
 // ---------- residuals: every day against the model, with a normal curve of the same SD ----------
 const RS = { log: false, abs: false, hi: -1 };
 const erf = (x) => { const s = Math.sign(x), t = 1 / (1 + 0.3275911 * Math.abs(x)); return s * (1 - ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x)); };
@@ -963,10 +1007,10 @@ $("eqn-dt").innerHTML = "<b>Date</b> gives each calendar date its own effect, se
   document.addEventListener("pointerup", (e) => { if (e.pointerType === "mouse") return; const t = e.target.closest && e.target.closest(".eq .eqt"); shut(t); if (t) t.classList.toggle("open"); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") shut(null); }); }
 $("show-data").addEventListener("click", () => { SHOW.on = !SHOW.on; $("show-data").setAttribute("aria-checked", String(SHOW.on)); $("dnote").hidden = !SHOW.on; drawPanels(); });
-fillDays(); drawSeq(); drawResid(); sixText(); drawSix(); setStep(0, true); drawPanels(); drawBday(); drawEffects();
+fillDays(); drawSeq(); drawDens(); drawResid(); sixText(); drawSix(); setStep(0, true); drawPanels(); drawBday(); drawEffects();
 let lastW = 0;
-new ResizeObserver(() => { const w = document.body.clientWidth; if (w === lastW) return; lastW = w; requestAnimationFrame(() => { placeBracket(); drawResid(); drawSeq(); drawSix(); drawFab(); drawPanels(); drawEffects(); drawBday(); }); }).observe(document.body);
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { placeBracket(); drawResid(); drawSeq(); drawSix(); drawFab(); drawPanels(); drawEffects(); drawBday(); });
+new ResizeObserver(() => { const w = document.body.clientWidth; if (w === lastW) return; lastW = w; requestAnimationFrame(() => { placeBracket(); drawResid(); drawDens(); drawSeq(); drawSix(); drawFab(); drawPanels(); drawEffects(); drawBday(); }); }).observe(document.body);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { placeBracket(); drawResid(); drawDens(); drawSeq(); drawSix(); drawFab(); drawPanels(); drawEffects(); drawBday(); });
 })();
 </script>
 </body>
